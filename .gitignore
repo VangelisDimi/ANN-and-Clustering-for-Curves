@@ -1,0 +1,11 @@
+# Compiled Object files
+*.o
+
+# Binary Folders
+bin/
+
+#Output folder
+output/
+
+#vscode folder
+.vscode/
