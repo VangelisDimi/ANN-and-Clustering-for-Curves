@@ -185,23 +185,3 @@ void read_file(string filename,vector<vector<float>> &vectors,vector<string> &id
 		i++;
 	}
 }
-
-void write_file(ofstream &outfile,string query_id,vector<string> ids,vector<pair<float,unsigned int>> N_Nearest,vector<pair<float,unsigned int>> R_Nearest,vector<pair<float,unsigned int>> True_N_Nearest,double time,double time_true,string algorithm)
-{
-	outfile << "Query: " << query_id << endl;
-	for (long unsigned int i = 0; i < N_Nearest.size(); i++)
-	{
-		outfile << "Nearest neighbor-" << i+1 << ": " << ids[N_Nearest[i].second] << endl;
-		outfile << "distance" << algorithm << ": " << N_Nearest[i].first << endl;
-		outfile << "distanceTrue: " << True_N_Nearest[i].first << endl;
-	}
-
-	outfile << "t" << algorithm << ": " << time << endl;
-	outfile << "tTrue: " << time_true << endl;
-
-	outfile << "R-near neighbors:" << endl;
-	for (long unsigned int i = 0; i < R_Nearest.size(); i++)
-	{
-		outfile << ids[R_Nearest[i].second] << endl;
-	}
-}
