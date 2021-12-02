@@ -213,11 +213,11 @@ int main(int argc, char *argv[]){
 		}
 		else if(algorithm=="Frechet" && metric=="discrete")
 		{
-
+			
 		}
 		else if(algorithm=="Frechet" && metric=="continuous")
 		{
-			 
+			
 		}
 
         string option;
