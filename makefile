@@ -24,7 +24,7 @@ valgrind_search: mkdir
 			--log-file=./output/valgrind-out-lsh.txt \
 			./bin/search $(ARGS)
 			
-run_search:
+run_search: compile_search
 	./bin/search $(ARGS)
 
 

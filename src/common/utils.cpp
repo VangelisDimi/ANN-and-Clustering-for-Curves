@@ -12,8 +12,23 @@
 #include <stdio.h>
 #include <stdlib.h>    
 #include "utils.hpp"
+#include "../../FredLib/include/frechet.hpp"
+#include "../../FredLib/include/curve.hpp"
 
 using namespace std;
+
+double getContinuousFrechetDistance(vector<float> p1, vector<float> p2)
+{
+	Frechet::Continuous::Distance cdist = Frechet::Continuous::distance(new Curve(p1), new Curve(p2));
+	return cdist.value;
+}
+
+double getDiscreteFrechetDistance(vector<float> p1, vector<float> p2)
+{
+	Frechet::Discrete::Distance ddist = Frechet::Discrete::distance(new Curve(p1), new Curve(p2));
+	return ddist.value;
+}
+
 
 vector<int> getNearbyProbes(int key, int n, int size)
 {
