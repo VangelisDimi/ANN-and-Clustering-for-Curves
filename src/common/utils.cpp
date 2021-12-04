@@ -12,8 +12,8 @@
 #include <stdio.h>
 #include <stdlib.h>    
 #include "utils.hpp"
-// #include "../../FredLib/include/frechet.hpp"
-// #include "../../FredLib/include/curve.hpp"
+#include "../../FredLib/include/frechet.hpp"
+#include "../../FredLib/include/curve.hpp"
 
 using namespace std;
 
