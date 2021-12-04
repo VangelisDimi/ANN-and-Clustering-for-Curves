@@ -12,18 +12,25 @@
 #include <stdio.h>
 #include <stdlib.h>    
 #include "utils.hpp"
-#include "../../FredLib/include/frechet.hpp"
-#include "../../FredLib/include/curve.hpp"
+// #include "../../FredLib/include/frechet.hpp"
+// #include "../../FredLib/include/curve.hpp"
 
 using namespace std;
 
-vector<float> snapCurveTo1dSpace(vector<float> p, double delta){
-	int x = 0
-	vector<float> snappedCurve;
+vector<pair<float,float>> snapCurveTo1dSpace(vector<float> p, double delta){
+	float _x = 0.0;
+	float _y = 0.0;
+	float x = 0.0;
+	float y = 0.0;
+	vector<pair<float,float>> snappedCurve;
 	for(int i=0; i<p.size(); p++){
-		y=p[i];
-		snappedCurve.push_back(delta*floor(x+delta/2 , y+delta/2));
+		_y = p[i];
+		x  = delta*floor(_x + delta/2);
+		y  = delta*floor(_y + delta/2);
+		_x += 1;
+		snappedCurve.push_back({x,y});
 	}
+	return snappedCurve;
 }
 
 vector<float> snapCurveTo2dSpace(vector<float> p, double delta){
