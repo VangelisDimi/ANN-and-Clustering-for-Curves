@@ -17,6 +17,19 @@
 
 using namespace std;
 
+vector<float> snapCurveTo1dSpace(vector<float> p, double delta){
+	int x = 0
+	vector<float> snappedCurve;
+	for(int i=0; i<p.size(); p++){
+		y=p[i];
+		snappedCurve.push_back(delta*floor(x+delta/2 , y+delta/2));
+	}
+}
+
+vector<float> snapCurveTo2dSpace(vector<float> p, double delta){
+
+}
+
 double getContinuousFrechetDistance(vector<float> p1, vector<float> p2)
 {
 	Frechet::Continuous::Distance cdist = Frechet::Continuous::distance(new Curve(p1), new Curve(p2));
