@@ -23,7 +23,7 @@ vector<pair<float,float>> snapCurveTo1dSpace(vector<float> p, double delta){
 	float x = 0.0;
 	float y = 0.0;
 	vector<pair<float,float>> snappedCurve;
-	for(int i=0; i<p.size(); p++){
+	for(int i=0; i<p.size(); i++){
 		_y = p[i];
 		x  = delta*floor(_x + delta/2);
 		y  = delta*floor(_y + delta/2);
