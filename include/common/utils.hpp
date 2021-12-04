@@ -8,7 +8,8 @@ using namespace std;
 
 #include "exhaustive_search.hpp"
 
-
+vector<float> snapCurveTo1dSpace(vector<float> p, double delta);
+vector<pair<float,float>> snapCurveTo2dSpace(vector<float> p, double delta);
 float eucledian_distance(vector<float>,vector<float>);
 void read_file(string filename,vector<vector<float>> &vectors,vector<string> &ids);
 float normal_distribution_rng();

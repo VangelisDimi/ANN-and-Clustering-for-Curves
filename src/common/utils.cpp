@@ -17,7 +17,15 @@
 
 using namespace std;
 
-vector<pair<float,float>> snapCurveTo1dSpace(vector<float> p, double delta){
+vector<float> snapCurveTo1dSpace(vector<float> p, double delta){
+	vector<float> snappedCurve;
+	for(int i=0; i<p.size(); i++){
+		snappedCurve.push_back(delta*floor(p[i] + delta/2));
+	}
+	return snappedCurve;
+}
+
+vector<pair<float,float>> snapCurveTo2dSpace(vector<float> p, double delta){
 	float _x = 0.0;
 	float _y = 0.0;
 	float x = 0.0;
@@ -31,10 +39,6 @@ vector<pair<float,float>> snapCurveTo1dSpace(vector<float> p, double delta){
 		snappedCurve.push_back({x,y});
 	}
 	return snappedCurve;
-}
-
-vector<float> snapCurveTo2dSpace(vector<float> p, double delta){
-
 }
 
 double getContinuousFrechetDistance(vector<float> p1, vector<float> p2)
