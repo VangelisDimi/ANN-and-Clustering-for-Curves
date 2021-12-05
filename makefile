@@ -1,10 +1,13 @@
 #makefile
+all: compile_search
+
 COMMON 			?= ./src/common
 INCLUDE_COMMON 	?= ./include/common
+INCLUDE_LIB ?= -I./lib/Fred/pybind11/include -I/usr/include/python2.7 -I./lib/Fred/include
 
 CC				= g++ -std=c++14
-CFLAGS 			?= -I$(INCLUDE_COMMON) -O2
-DEBUGFLAGS 		?= -g -Wextra -Wall -I$(INCLUDE_COMMON) -O2
+CFLAGS 			?= -I$(INCLUDE_COMMON) $(INCLUDE_LIB) -O2
+DEBUGFLAGS 		?= -g -Wextra -Wall -I$(INCLUDE_COMMON) $(INCLUDE_LIB) -O2
 
 #search
 clean_search:
@@ -26,6 +29,11 @@ valgrind_search: mkdir
 			
 run_search: compile_search
 	./bin/search $(ARGS)
+
+
+#lib
+compile_lib:
+	cd ./lib/Fred && make
 
 
 mkdir:

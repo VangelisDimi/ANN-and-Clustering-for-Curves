@@ -85,7 +85,7 @@ int main(int argc, char *argv[]){
 	string update; //-update
 	string assignment; //-assignment
     bool complete = false;//-complete
-    bool silhouette = false //-silhouette
+    bool silhouette = false; //-silhouette
 	
     int K_cluster;
     int L_lsh=3;
