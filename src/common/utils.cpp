@@ -18,8 +18,10 @@
 
 using namespace std;
 
+namespace 1d
+{
 
-vector<float> snapCurveTo1dSpace(vector<float> p, double delta){
+vector<float> snapCurveToSpace(vector<float> p, double delta){
 	vector<float> snappedCurve;
 	for(int i=0; i<p.size(); i++){
 		snappedCurve.push_back(delta*floor(p[i] + delta/2));
@@ -27,7 +29,12 @@ vector<float> snapCurveTo1dSpace(vector<float> p, double delta){
 	return snappedCurve;
 }
 
-vector<vector<float>> snapCurveTo2dSpace(vector<float> p, double delta){
+}
+
+namespace 2d
+{
+
+vector<vector<float>> snapCurveToSpace(vector<float> p, double delta){
 	float _x = 0.0;
 	float _y = 0.0;
 	float x = 0.0;
@@ -43,11 +50,44 @@ vector<vector<float>> snapCurveTo2dSpace(vector<float> p, double delta){
 	return snappedCurve;
 }
 
-// double getContinuousFrechetDistance(vector<float> p1, vector<float> p2)
-// {
-// 	Frechet::Continuous::Distance cdist = Frechet::Continuous::distance(new Curve(p1), new Curve(p2));
-// 	return cdist.value;
-// }
+vector<float> concatCurve(vector<vector<float>> p){
+	vector<float> concatedCurve;
+	float _x = p[0][0];
+	float _y = p[0][1];
+	float x = p[0][0];
+	float y = p[0][1];
+	int curveLength = p.size()*2;
+	for(int i=0; i<p.size(); i++){
+		x = p[i][0];
+		y = p[i][1];
+		if( x == _x && y == _y ){
+			_x = x;
+			_y = y;
+			continue;
+		}
+		concatedCurve.push_back(x);
+		concatedCurve.push_back(y);
+		_x = x;
+		_y = y;
+	}
+	if( curveLength > concatedCurve.length() )
+		for(int i=0; i>curveLength-concatedCurve.length(); i++)
+			concatedCurve.push_back(std::numeric_limits<float>::max()-5);
+	return concatedCurve;
+}
+
+vector<float> prepareCurve(vector<float> p, double delta){
+	vector<vector<float>> snappedCurve = 2d::snapCurveToSpace(p, delta);
+	return 2d::concatCurve(snappedCurve);
+}
+
+}
+
+double getContinuousFrechetDistance(vector<float> p1, vector<float> p2)
+{
+	Frechet::Continuous::Distance distance = Frechet::Continuous::distance(new Curve(p1), new Curve(p2));
+	return distance.value;
+}
 
 float getDiscreteFrechetDistance(vector<vector<float>> p, vector<vector<float>> q,unsigned int i,unsigned int j)
 {
