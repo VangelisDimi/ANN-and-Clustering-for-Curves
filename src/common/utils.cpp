@@ -13,10 +13,11 @@
 #include <stdlib.h>    
 #include "utils.hpp"
 
-#include "frechet.hpp"
-#include "curve.hpp"
+// #include "frechet.hpp"
+// #include "curve.hpp"
 
 using namespace std;
+
 
 vector<float> snapCurveTo1dSpace(vector<float> p, double delta){
 	vector<float> snappedCurve;
@@ -26,12 +27,12 @@ vector<float> snapCurveTo1dSpace(vector<float> p, double delta){
 	return snappedCurve;
 }
 
-vector<pair<float,float>> snapCurveTo2dSpace(vector<float> p, double delta){
+vector<vector<float>> snapCurveTo2dSpace(vector<float> p, double delta){
 	float _x = 0.0;
 	float _y = 0.0;
 	float x = 0.0;
 	float y = 0.0;
-	vector<pair<float,float>> snappedCurve;
+	vector<vector<float>> snappedCurve;
 	for(int i=0; i<p.size(); i++){
 		_y = p[i];
 		x  = delta*floor(_x + delta/2);
@@ -42,16 +43,22 @@ vector<pair<float,float>> snapCurveTo2dSpace(vector<float> p, double delta){
 	return snappedCurve;
 }
 
-double getContinuousFrechetDistance(vector<float> p1, vector<float> p2)
-{
-	// Frechet::Continuous::Distance cdist = Frechet::Continuous::distance(new Curve(p1), new Curve(p2));
-	// return cdist.value;
-}
+// double getContinuousFrechetDistance(vector<float> p1, vector<float> p2)
+// {
+// 	Frechet::Continuous::Distance cdist = Frechet::Continuous::distance(new Curve(p1), new Curve(p2));
+// 	return cdist.value;
+// }
 
-double getDiscreteFrechetDistance(vector<float> p1, vector<float> p2)
+float getDiscreteFrechetDistance(vector<vector<float>> p, vector<vector<float>> q,unsigned int i,unsigned int j)
 {
-	// Frechet::Discrete::Distance ddist = Frechet::Discrete::distance(new Curve(p1), new Curve(p2));
-	// return ddist.value;
+	if(i==1 && j == 1)
+		return eucledian_distance(p[1],q[1]);
+	else if(i==1 && j>1)
+		return max(getDiscreteFrechetDistance(p,q,1,j-1),eucledian_distance(p[1],q[j]));
+	else if(i>1 && j==1)
+		return max(getDiscreteFrechetDistance(p,q,i-1,1),eucledian_distance(p[i],q[1]));
+	else
+		return max(min({getDiscreteFrechetDistance(p,q,i-1,j),getDiscreteFrechetDistance(p,q,i-1,j-1),getDiscreteFrechetDistance(p,q,i,j-1)}),eucledian_distance(p[i],q[j]));
 }
 
 
