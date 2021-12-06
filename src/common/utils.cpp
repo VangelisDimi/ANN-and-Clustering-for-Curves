@@ -34,7 +34,7 @@ vector<float> snapCurveToSpace(vector<float> p, double delta){
 namespace 2d
 {
 
-vector<vector<float>> snapCurveToSpace(vector<float> p, double delta){
+vector<vector<float>> snapCurve(vector<float> p, double delta){
 	float _x = 0.0;
 	float _y = 0.0;
 	float x = 0.0;
@@ -77,7 +77,7 @@ vector<float> concatCurve(vector<vector<float>> p){
 }
 
 vector<float> prepareCurve(vector<float> p, double delta){
-	vector<vector<float>> snappedCurve = 2d::snapCurveToSpace(p, delta);
+	vector<vector<float>> snappedCurve = 2d::snapCurve(p, delta);
 	return 2d::concatCurve(snappedCurve);
 }
 
