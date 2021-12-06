@@ -33,8 +33,12 @@ run_search: compile_search
 
 #lib
 compile_lib:
+	mkdir -p ./lib
+	@cd ./lib;\
+	if [ ! -d ./Fred ] ; then\
+		git clone https://github.com/derohde/Fred;\
+	fi
 	cd ./lib/Fred && make
-
 
 mkdir:
 	mkdir -p ./bin
