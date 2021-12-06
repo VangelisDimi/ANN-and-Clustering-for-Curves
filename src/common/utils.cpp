@@ -21,7 +21,7 @@ using namespace std;
 namespace 1d
 {
 
-vector<float> snapCurveToSpace(vector<float> p, double delta){
+vector<float> snapCurve(vector<float> p, double delta){
 	vector<float> snappedCurve;
 	for(int i=0; i<p.size(); i++){
 		snappedCurve.push_back(delta*floor(p[i] + delta/2));
