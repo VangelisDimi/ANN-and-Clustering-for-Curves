@@ -110,7 +110,7 @@ LSH_Frechet::LSH_Frechet(vector<vector<float>> input_vectors,int k,int L,int met
 	LSH_Frechet::L=L;
 	LSH_Frechet::k=k;
 	LSH_Frechet::delta=delta;
-	w=600;
+	w=100;
 	vectorSize=(!input_vectors.empty()) ? input_vectors[0].size() : 0;
 	n=input_vectors.size();
 	tableSize=ceil(n*hashtable_size_ratio);
