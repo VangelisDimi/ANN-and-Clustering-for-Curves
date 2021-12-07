@@ -8,13 +8,18 @@ using namespace std;
 
 #include "exhaustive_search.hpp"
 
-vector<float> ONE_DIM::snapCurve(vector<float> p, double delta);
-vector<vector<float>> TWO_DIM::snapCurve(vector<float> p, double delta);
-vector<float> TWO_DIM::concatCurve(vector<vector<float>> p);
-vector<float> TWO_DIM::prepareCurve(vector<float> p, double delta);
+namespace ONE_DIM{
+    vector<float> snapCurve(vector<float> p, double delta);
+}
+namespace TWO_DIM{
+    vector<vector<float>> snapCurve(vector<float> p, double delta);
+    vector<float> concatCurve(vector<vector<float>> p);
+    vector<float> prepareCurve(vector<float> p, double delta);
+}
+
 float continuousFrechetDistance(vector<float> p1, vector<float> p2);
-float discreteFrechetDistance(vector<vector<float>> p, vector<vector<float>> q);
-float getDiscreteFrechetDistance(vector<vector<float>> p, vector<vector<float>> q,unsigned int i,unsigned int j)
+float discreteFrechetDistance(vector<float> p, vector<float> q);
+float getDiscreteFrechetDistance(vector<float> p, vector<float> q,unsigned int i,unsigned int j);
 float eucledian_distance(vector<float>,vector<float>);
 void read_file(string filename,vector<vector<float>> &vectors,vector<string> &ids);
 float normal_distribution_rng();

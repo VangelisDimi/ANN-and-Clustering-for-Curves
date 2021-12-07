@@ -91,14 +91,14 @@ vector<float> prepareCurve(vector<float> p, double delta){
 // }
 
 
-float discreteFrechetDistance(vector<vector<float>> p, vector<vector<float>> q)
+float discreteFrechetDistance(vector<float> p, vector<float> q)
 {
 	unsigned int i = p.size();
 	unsigned int j = q.size();
 	return getDiscreteFrechetDistance(p, q, i, j);
 }
 
-float getDiscreteFrechetDistance(vector<vector<float>> p, vector<vector<float>> q,unsigned int i,unsigned int j)
+float getDiscreteFrechetDistance(vector<float> p, vector<float> q,unsigned int i,unsigned int j)
 {
 	if(i==1 && j == 1)
 		return eucledian_distance(p[1],q[1]);
