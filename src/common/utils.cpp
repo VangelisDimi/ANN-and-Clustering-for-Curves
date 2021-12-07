@@ -100,6 +100,8 @@ float discreteFrechetDistance(vector<float> p, vector<float> q)
 
 float getDiscreteFrechetDistance(vector<float> p, vector<float> q,unsigned int i,unsigned int j)
 {
+	// TODO: calculate discrete frechet distance with dp instead of recursion
+	// using the new type of the curves (snapped) : vector<float> instead of vector<vector<float>> 
 	if(i==1 && j == 1)
 		return eucledian_distance(p[1],q[1]);
 	else if(i==1 && j>1)
