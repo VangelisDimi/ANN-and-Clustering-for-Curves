@@ -13,8 +13,8 @@
 #include <stdlib.h>    
 #include "utils.hpp"
 
-// #include "frechet.hpp"
-// #include "curve.hpp"
+#include "frechet.hpp"
+#include "curve.hpp"
 
 using namespace std;
 
