@@ -84,23 +84,30 @@ vector<float> prepareCurve(vector<float> p, double delta){
 }
 
 
-// double continuousFrechetDistance(vector<float> p, vector<float> q)
+// float continuousFrechetDistance(vector<float> p, vector<float> q)
 // {
 // 	Frechet::Continuous::Distance distance = Frechet::Continuous::distance(new Curve(p), new Curve(q));
 // 	return distance.value;
 // }
 
 
-float discreteFrechetDistance(vector<vector<float>> p, vector<vector<float>> q,unsigned int i,unsigned int j)
+float discreteFrechetDistance(vector<vector<float>> p, vector<vector<float>> q)
+{
+	unsigned int i = p.size();
+	unsigned int j = q.size();
+	return getDiscreteFrechetDistance(p, q, i, j);
+}
+
+float getDiscreteFrechetDistance(vector<vector<float>> p, vector<vector<float>> q,unsigned int i,unsigned int j)
 {
 	if(i==1 && j == 1)
 		return eucledian_distance(p[1],q[1]);
 	else if(i==1 && j>1)
-		return max(discreteFrechetDistance(p,q,1,j-1),eucledian_distance(p[1],q[j]));
+		return max(getDiscreteFrechetDistance(p,q,1,j-1),eucledian_distance(p[1],q[j]));
 	else if(i>1 && j==1)
-		return max(discreteFrechetDistance(p,q,i-1,1),eucledian_distance(p[i],q[1]));
+		return max(getDiscreteFrechetDistance(p,q,i-1,1),eucledian_distance(p[i],q[1]));
 	else
-		return max(min({discreteFrechetDistance(p,q,i-1,j),discreteFrechetDistance(p,q,i-1,j-1),discreteFrechetDistance(p,q,i,j-1)}),eucledian_distance(p[i],q[j]));
+		return max(min({getDiscreteFrechetDistance(p,q,i-1,j),getDiscreteFrechetDistance(p,q,i-1,j-1),getDiscreteFrechetDistance(p,q,i,j-1)}),eucledian_distance(p[i],q[j]));
 }
 
 

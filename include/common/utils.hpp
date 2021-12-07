@@ -12,8 +12,9 @@ vector<float> ONE_DIM::snapCurve(vector<float> p, double delta);
 vector<vector<float>> TWO_DIM::snapCurve(vector<float> p, double delta);
 vector<float> TWO_DIM::concatCurve(vector<vector<float>> p);
 vector<float> TWO_DIM::prepareCurve(vector<float> p, double delta);
-double continuousFrechetDistance(vector<float> p1, vector<float> p2);
-float discreteFrechetDistance(vector<vector<float>> p, vector<vector<float>> q,unsigned int i,unsigned int j);
+float continuousFrechetDistance(vector<float> p1, vector<float> p2);
+float discreteFrechetDistance(vector<vector<float>> p, vector<vector<float>> q);
+float getDiscreteFrechetDistance(vector<vector<float>> p, vector<vector<float>> q,unsigned int i,unsigned int j)
 float eucledian_distance(vector<float>,vector<float>);
 void read_file(string filename,vector<vector<float>> &vectors,vector<string> &ids);
 float normal_distribution_rng();
