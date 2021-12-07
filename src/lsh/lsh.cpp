@@ -151,7 +151,7 @@ LSH::LSH(vector<vector<float>> input_vectors,int k,int L,int metric,float hashta
 	for(int i=0; i<n; i++)
 	{
 		if(metric==DFD)
-			input_vector = 2d::prepareCurve(input_vectors[i],delta);
+			input_vector = TWO_DIM::prepareCurve(input_vectors[i],delta);
 		else
 			input_vector = input_vectors[i];
 		for(int y=0;y<L;y++)

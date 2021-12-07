@@ -18,7 +18,7 @@
 
 using namespace std;
 
-namespace 1d
+namespace ONE_DIM
 {
 
 vector<float> snapCurve(vector<float> p, double delta){
@@ -31,7 +31,7 @@ vector<float> snapCurve(vector<float> p, double delta){
 
 }
 
-namespace 2d
+namespace TWO_DIM
 {
 
 vector<vector<float>> snapCurve(vector<float> p, double delta){
@@ -70,25 +70,25 @@ vector<float> concatCurve(vector<vector<float>> p){
 		_x = x;
 		_y = y;
 	}
-	if( curveLength > concatedCurve.length() )
-		for(int i=0; i>curveLength-concatedCurve.length(); i++)
+	if( curveLength > concatedCurve.size() )
+		for(int i=0; i>curveLength-concatedCurve.size(); i++)
 			concatedCurve.push_back(std::numeric_limits<float>::max()-5);
 	return concatedCurve;
 }
 
 vector<float> prepareCurve(vector<float> p, double delta){
-	vector<vector<float>> snappedCurve = 2d::snapCurve(p, delta);
-	return 2d::concatCurve(snappedCurve);
+	vector<vector<float>> snappedCurve = TWO_DIM::snapCurve(p, delta);
+	return TWO_DIM::concatCurve(snappedCurve);
 }
 
 }
 
 
-double continuousFrechetDistance(vector<float> p, vector<float> q)
-{
-	Frechet::Continuous::Distance distance = Frechet::Continuous::distance(new Curve(p), new Curve(q));
-	return distance.value;
-}
+// double continuousFrechetDistance(vector<float> p, vector<float> q)
+// {
+// 	Frechet::Continuous::Distance distance = Frechet::Continuous::distance(new Curve(p), new Curve(q));
+// 	return distance.value;
+// }
 
 
 float discreteFrechetDistance(vector<vector<float>> p, vector<vector<float>> q,unsigned int i,unsigned int j)
@@ -96,11 +96,11 @@ float discreteFrechetDistance(vector<vector<float>> p, vector<vector<float>> q,u
 	if(i==1 && j == 1)
 		return eucledian_distance(p[1],q[1]);
 	else if(i==1 && j>1)
-		return max(getDiscreteFrechetDistance(p,q,1,j-1),eucledian_distance(p[1],q[j]));
+		return max(discreteFrechetDistance(p,q,1,j-1),eucledian_distance(p[1],q[j]));
 	else if(i>1 && j==1)
-		return max(getDiscreteFrechetDistance(p,q,i-1,1),eucledian_distance(p[i],q[1]));
+		return max(discreteFrechetDistance(p,q,i-1,1),eucledian_distance(p[i],q[1]));
 	else
-		return max(min({getDiscreteFrechetDistance(p,q,i-1,j),getDiscreteFrechetDistance(p,q,i-1,j-1),getDiscreteFrechetDistance(p,q,i,j-1)}),eucledian_distance(p[i],q[j]));
+		return max(min({discreteFrechetDistance(p,q,i-1,j),discreteFrechetDistance(p,q,i-1,j-1),discreteFrechetDistance(p,q,i,j-1)}),eucledian_distance(p[i],q[j]));
 }
 
 

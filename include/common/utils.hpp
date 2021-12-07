@@ -8,10 +8,10 @@ using namespace std;
 
 #include "exhaustive_search.hpp"
 
-vector<float> 1d::snapCurve(vector<float> p, double delta);
-vector<vector<float>> 2d::snapCurve(vector<float> p, double delta);
-vector<float> 2d::concatCurve(vector<vector<float>> p);
-vector<float> 2d::prepareCurve(vector<float> p, double delta);
+vector<float> ONE_DIM::snapCurve(vector<float> p, double delta);
+vector<vector<float>> TWO_DIM::snapCurve(vector<float> p, double delta);
+vector<float> TWO_DIM::concatCurve(vector<vector<float>> p);
+vector<float> TWO_DIM::prepareCurve(vector<float> p, double delta);
 double continuousFrechetDistance(vector<float> p1, vector<float> p2);
 float discreteFrechetDistance(vector<vector<float>> p, vector<vector<float>> q,unsigned int i,unsigned int j);
 float eucledian_distance(vector<float>,vector<float>);
