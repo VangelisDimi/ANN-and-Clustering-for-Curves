@@ -98,7 +98,7 @@ float discreteFrechetDistance(vector<float> p, vector<float> q)
 	return getDiscreteFrechetDistance(p, q, i, j);
 }
 
-float getDiscreteFrechetDistance(vector<float> p, vector<float> q,unsigned int i,unsigned int j)
+float getDiscreteFrechetDistance(vector<float> p, vector<float> q, unsigned int i, unsigned int j)
 {
 	// TODO: calculate discrete frechet distance with dp instead of recursion
 	// using the new type of the curves (snapped) : vector<float> instead of vector<vector<float>> 
