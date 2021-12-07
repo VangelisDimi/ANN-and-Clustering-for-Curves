@@ -14,10 +14,10 @@ clean_search:
 	rm -f ./bin/search
 
 compile_search: mkdir
-	$(CC) ./src/search/main_search.cpp ./src/lsh/lsh.cpp ./src/cube/cube.cpp $(COMMON)/hash_functions.cpp $(COMMON)/utils.cpp $(COMMON)/exhaustive_search.cpp -o ./bin/search -I./include/lsh -I./include/cube $(CFLAGS)
+	$(CC) ./src/search/main_search.cpp ./src/lsh/lsh.cpp ./src/cube/cube.cpp ./src/search/lsh_frechet.cpp $(COMMON)/hash_functions.cpp $(COMMON)/utils.cpp $(COMMON)/exhaustive_search.cpp -o ./bin/search -I./include/lsh -I./include/cube -I./include/search $(CFLAGS)
 
 compile_debug_search:
-	$(CC) ./src/search/main_search.cpp ./src/lsh/lsh.cpp ./src/cube/cube.cpp $(COMMON)/hash_functions.cpp $(COMMON)/utils.cpp $(COMMON)/exhaustive_search.cpp -o ./bin/search -I./include/lsh -I./include/cube $(DEBUGFLAGS)
+	$(CC) ./src/search/main_search.cpp ./src/lsh/lsh.cpp ./src/cube/cube.cpp ./src/search/lsh_frechet.cpp $(COMMON)/hash_functions.cpp $(COMMON)/utils.cpp $(COMMON)/exhaustive_search.cpp -o ./bin/search -I./include/lsh -I./include/cube -I./include/search $(DEBUGFLAGS)
 
 valgrind_search: mkdir
 	valgrind --leak-check=full \

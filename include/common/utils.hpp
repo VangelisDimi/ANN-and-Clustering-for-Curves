@@ -18,8 +18,7 @@ namespace TWO_DIM{
 }
 
 float continuousFrechetDistance(vector<float> p1, vector<float> p2);
-float discreteFrechetDistance(vector<float> p, vector<float> q);
-float getDiscreteFrechetDistance(vector<float> p, vector<float> q,unsigned int i,unsigned int j);
+float getDiscreteFrechetDistance(vector<float> p, vector<float> q);
 float eucledian_distance(vector<float>,vector<float>);
 void read_file(string filename,vector<vector<float>> &vectors,vector<string> &ids);
 float normal_distribution_rng();

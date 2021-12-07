@@ -1,4 +1,4 @@
-#include "lsh.hpp"
+#include "lsh_frechet.hpp"
 #include <math.h>
 #include <numeric>
 #include <map>
@@ -9,11 +9,11 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-unsigned int LSH::g(vector<float> p,unsigned int j){
+unsigned int LSH_Frechet::g(vector<float> p,unsigned int j){
 	return modulo(ID(p,j),tableSize);
 }
 
-unsigned long long int LSH::ID(vector<float> p,unsigned int j) {
+unsigned long long int LSH_Frechet::ID(vector<float> p,unsigned int j) {
 	unsigned long long int *h = new unsigned long long int[k];
 	for(int i=0; i<k; i++)
 		h[i] = modulo(hash_L2(i,p,v[j],t[j],w),M);
@@ -24,7 +24,7 @@ unsigned long long int LSH::ID(vector<float> p,unsigned int j) {
 	return modulo(_g,M);
 }
 
-void LSH::unmarkAssignedPoints()
+void LSH_Frechet::unmarkAssignedPoints()
 {
 	for(int p=0; p<L; p++)
 		for(int id=0; id<tableSize;id++)
@@ -35,19 +35,20 @@ void LSH::unmarkAssignedPoints()
 			}
 }
 
-vector<pair<float,unsigned int>> LSH::find_N_nearest(vector<float> p,unsigned int N)
+vector<pair<float,unsigned int>> LSH_Frechet::find_N_nearest(vector<float> p,unsigned int N)
 {
 	//Returns indexes of N Nearest elements
 	multimap<float, int> distances;
+	vector<float> hash_vector=LSH_Frechet::prepare_curve(p,delta);
 	for (int y=0 ; y<L ; y++)
 	{
-		unsigned long long int ID = LSH::ID(p,y);
+		unsigned long long int ID = LSH_Frechet::ID(hash_vector,y);
 		for (auto it = hashtables[y].begin(ID); it != hashtables[y].end(ID); ++it )
 		{
 			hashtable_item_lsh p_b = *it;
 			if (p_b.ID == ID)
 			{
-				float distance = LSH::distance(p,p_b.p);
+				float distance = LSH_Frechet::distance(p,p_b.p);
 				if(distances.find(distance) == distances.end() || distances.find(distance)->second != p_b.index)
 					distances.insert({distance,p_b.index});
 			}
@@ -64,20 +65,21 @@ vector<pair<float,unsigned int>> LSH::find_N_nearest(vector<float> p,unsigned in
 	return N_Nearest;
 }
 
-vector<pair<float,unsigned int>> LSH::find_R_nearest(vector<float> p,float R)
+vector<pair<float,unsigned int>> LSH_Frechet::find_R_nearest(vector<float> p,float R)
 {
 	//Returns indexes of R nearest element
 	multimap<float, int> distances;
+	vector<float> hash_vector=LSH_Frechet::prepare_curve(p,delta);
 	for (int y=0 ; y<L ; y++)
 	{
-		unsigned long long int ID = LSH::ID(p,y);
+		unsigned long long int ID = LSH_Frechet::ID(hash_vector,y);
 		for (auto it = hashtables[y].begin(ID); it != hashtables[y].end(ID); ++it )
 		{
 			hashtable_item_lsh p_b = *it;
 			if (p_b.ID == ID)
 			{
 				if(clusterMode && p_b.flag && p_b.radius_found!=R) continue;
-				float distance = LSH::distance(p,p_b.p);
+				float distance = LSH_Frechet::distance(p,p_b.p);
 				if(distance<=R)
 				{
 					if(clusterMode)
@@ -102,11 +104,12 @@ vector<pair<float,unsigned int>> LSH::find_R_nearest(vector<float> p,float R)
 	return R_Nearest;
 }
 
-LSH::LSH(vector<vector<float>> input_vectors,int k,int L,int metric,float hashtable_size_ratio)//Constructor
+LSH_Frechet::LSH_Frechet(vector<vector<float>> input_vectors,int k,int L,int metric,double delta,float hashtable_size_ratio)//Constructor
 {
 	//Initialize values
-	LSH::L=L;
-	LSH::k=k;
+	LSH_Frechet::L=L;
+	LSH_Frechet::k=k;
+	LSH_Frechet::delta=delta;
 	w=600;
 	vectorSize=(!input_vectors.empty()) ? input_vectors[0].size() : 0;
 	n=input_vectors.size();
@@ -137,21 +140,31 @@ LSH::LSH(vector<vector<float>> input_vectors,int k,int L,int metric,float hashta
 			}
 		}
 	}
-	if(metric==L2)
-		distance=&eucledian_distance;
+
+	if(metric==DFD)
+	{
+		distance=&getDiscreteFrechetDistance;
+		prepare_curve=&TWO_DIM::prepareCurve;
+	}
+	// else if(metric==CFD)
+	// {
+	// 	distance=&continuousFrechetDistance;
+	// }
 
 	//Add vectors to L hashtables
-	for(int i = 0;i<n;i++)
+	vector<float> hash_vector;
+	for(int i=0; i<n; i++)
 	{
+		hash_vector = LSH_Frechet::prepare_curve(input_vectors[i],delta);
 		for(int y=0;y<L;y++)
 		{
-			hashtable_item_lsh p{input_vectors[i],ID(input_vectors[i],y),i};
+			hashtable_item_lsh p{hash_vector,input_vectors[i],ID(hash_vector,y),i};
 			hashtables[y].insert(p.ID,p);
 		}
 	}
 };
 
-LSH::~LSH()//Destructor
+LSH_Frechet::~LSH_Frechet()//Destructor
 {
 	delete[] hashtables;
 	for(int i=0;i<L;i++)

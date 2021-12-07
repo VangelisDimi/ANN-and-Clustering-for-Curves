@@ -1,6 +1,6 @@
 #pragma once
-#ifndef lsh_h
-#define lsh_h
+#ifndef lshf_h
+#define lshf_h
 
 #include <ctime>
 #include <cstring>
@@ -17,14 +17,16 @@ using namespace std;
 
 #include <iostream>
 
-#define L2 2
+#define DFD 1
+#define CFD 2
 
-class LSH
+class LSH_Frechet
 {
 private:
 	struct hashtable_item_lsh
 	{
-		vector<float> p;
+		vector<float> hash_curve;
+        vector<float> p;
 		unsigned long long int ID;
 		int index;
 		bool flag = false;
@@ -36,10 +38,13 @@ private:
 	int vectorSize;
 
 	float (*distance)(vector<float>, vector<float>);//Distance function
+
+	vector<float> (*prepare_curve)(vector<float>,double);
+
 	hash_table<hashtable_item_lsh> *hashtables;//Hashtables
 	int L;//Number of hashtables
 	int k;//Number of hash functions
-
+	double delta;
 	vector<int> r;//r vector used by g
 	vector<float> **v;//Random vector used by hash function
 	float **t;//Random number used by hash function
@@ -54,12 +59,12 @@ protected:
 	void unmarkAssignedPoints();
 
 public:
-	LSH(vector<vector<float>> input_vectors,int k,int L,int metric,float hashtable_size_ratio = 0.25);
-	~LSH();//Destructor
+	LSH_Frechet(vector<vector<float>> input_vectors,int k,int L,int metric,double delta,float hashtable_size_ratio = 0.25);
+	~LSH_Frechet();//Destructor
 	vector<pair<float,unsigned int>> find_N_nearest(vector<float> p,unsigned int N);
 	vector<pair<float,unsigned int>> find_R_nearest(vector<float> p,float R);
 };
 
-template class hash_table<LSH::hashtable_item_lsh>;
+template class hash_table<LSH_Frechet::hashtable_item_lsh>;
 
 #endif

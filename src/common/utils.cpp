@@ -90,26 +90,24 @@ vector<float> prepareCurve(vector<float> p, double delta){
 // 	return distance.value;
 // }
 
-
-float discreteFrechetDistance(vector<float> p, vector<float> q)
+float getDiscreteFrechetDistance(vector<float> p, vector<float> q)
 {
-	unsigned int i = p.size();
-	unsigned int j = q.size();
-	return getDiscreteFrechetDistance(p, q, i, j);
-}
-
-float getDiscreteFrechetDistance(vector<float> p, vector<float> q, unsigned int i, unsigned int j)
-{
-	// TODO: calculate discrete frechet distance with dp instead of recursion
-	// using the new type of the curves (snapped) : vector<float> instead of vector<vector<float>> 
-	if(i==1 && j == 1)
-		return eucledian_distance(p[1],q[1]);
-	else if(i==1 && j>1)
-		return max(getDiscreteFrechetDistance(p,q,1,j-1),eucledian_distance(p[1],q[j]));
-	else if(i>1 && j==1)
-		return max(getDiscreteFrechetDistance(p,q,i-1,1),eucledian_distance(p[i],q[1]));
-	else
-		return max(min({getDiscreteFrechetDistance(p,q,i-1,j),getDiscreteFrechetDistance(p,q,i-1,j-1),getDiscreteFrechetDistance(p,q,i,j-1)}),eucledian_distance(p[i],q[j]));
+	float c[p.size()][q.size()];
+	for(int i=0;i<p.size();i++)
+	{
+		for(int j=0;j<p.size();j++)
+		{
+			if(i==0 && j == 0)
+				c[0][0]=eucledian_distance({0,p[0]},{0,q[0]});
+			else if(i==0 && j>0)
+				c[i][j]= max(c[0][j-1],eucledian_distance({0,p[0]},{(float) j,q[j]}));
+			else if(i>0 && j==0)
+				c[i][j]= max(c[i-1][0],eucledian_distance({(float) i,p[i]},{0,q[0]}));
+			else
+				c[i][j]= max(min({c[i-1][j],c[i-1][j-1],c[i][j-1]}),eucledian_distance({(float) i,p[i]},{(float) j,q[j]}));
+		}
+	}
+	return c[p.size()-1][q.size()-1];
 }
 
 
