@@ -21,6 +21,18 @@ using namespace std;
 namespace ONE_DIM
 {
 
+void filter(vector<vector<float>> &vectors)
+{
+	for(unsigned int i=0;i<vectors.size();i++)
+	{
+		for(unsigned int y=1;y<vectors[i].size()-1;y++)
+		{
+			if(abs(vectors[i][y+1]-vectors[i][y])<numeric_limits<float>::epsilon() && abs(vectors[i][y]-vectors[i][y-1])<numeric_limits<float>::epsilon())
+				vectors[i].erase(vectors[i].begin() + y);
+		}
+	}
+}
+
 vector<float> snapCurve(vector<float> p, double delta){
 	vector<float> snappedCurve;
 	for(int i=0; i<p.size(); i++){

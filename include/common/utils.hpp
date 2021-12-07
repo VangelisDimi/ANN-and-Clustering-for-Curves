@@ -9,6 +9,7 @@ using namespace std;
 #include "exhaustive_search.hpp"
 
 namespace ONE_DIM{
+    void filter(vector<vector<float>> &vectors);
     vector<float> snapCurve(vector<float> p, double delta);
 }
 namespace TWO_DIM{
