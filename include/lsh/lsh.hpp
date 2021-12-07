@@ -18,6 +18,8 @@ using namespace std;
 #include <iostream>
 
 #define L2 2
+#define DFD 3
+#define CFD 4
 
 class LSH
 {
@@ -39,7 +41,7 @@ private:
 	hash_table<hashtable_item_lsh> *hashtables;//Hashtables
 	int L;//Number of hashtables
 	int k;//Number of hash functions
-
+	double delta;
 	vector<int> r;//r vector used by g
 	vector<float> **v;//Random vector used by hash function
 	float **t;//Random number used by hash function
@@ -54,7 +56,7 @@ protected:
 	void unmarkAssignedPoints();
 
 public:
-	LSH(vector<vector<float>> input_vectors,int k,int L,int metric,float hashtable_size_ratio = 0.25);
+	LSH(vector<vector<float>> input_vectors,int k,int L,int metric,float hashtable_size_ratio = 0.25,double delta=NULL);
 	~LSH();//Destructor
 	vector<pair<float,unsigned int>> find_N_nearest(vector<float> p,unsigned int N);
 	vector<pair<float,unsigned int>> find_R_nearest(vector<float> p,float R);

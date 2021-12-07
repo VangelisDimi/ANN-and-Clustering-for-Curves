@@ -83,13 +83,15 @@ vector<float> prepareCurve(vector<float> p, double delta){
 
 }
 
-double getContinuousFrechetDistance(vector<float> p1, vector<float> p2)
+
+double continuousFrechetDistance(vector<float> p, vector<float> q)
 {
-	Frechet::Continuous::Distance distance = Frechet::Continuous::distance(new Curve(p1), new Curve(p2));
+	Frechet::Continuous::Distance distance = Frechet::Continuous::distance(new Curve(p), new Curve(q));
 	return distance.value;
 }
 
-float getDiscreteFrechetDistance(vector<vector<float>> p, vector<vector<float>> q,unsigned int i,unsigned int j)
+
+float discreteFrechetDistance(vector<vector<float>> p, vector<vector<float>> q,unsigned int i,unsigned int j)
 {
 	if(i==1 && j == 1)
 		return eucledian_distance(p[1],q[1]);

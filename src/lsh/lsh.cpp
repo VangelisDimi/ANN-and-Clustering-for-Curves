@@ -102,11 +102,12 @@ vector<pair<float,unsigned int>> LSH::find_R_nearest(vector<float> p,float R)
 	return R_Nearest;
 }
 
-LSH::LSH(vector<vector<float>> input_vectors,int k,int L,int metric,float hashtable_size_ratio)//Constructor
+LSH::LSH(vector<vector<float>> input_vectors,int k,int L,int metric,float hashtable_size_ratio,double delta=NULL)//Constructor
 {
 	//Initialize values
 	LSH::L=L;
 	LSH::k=k;
+	LSH::delta=delta;
 	w=600;
 	vectorSize=(!input_vectors.empty()) ? input_vectors[0].size() : 0;
 	n=input_vectors.size();
@@ -137,15 +138,25 @@ LSH::LSH(vector<vector<float>> input_vectors,int k,int L,int metric,float hashta
 			}
 		}
 	}
+
 	if(metric==L2)
 		distance=&eucledian_distance;
+	else if(metric==DFD)
+		distance=&discreteFrechetDistance;
+	else if(metric==CFD)
+		distance=&continuousFrechetDistance;
 
 	//Add vectors to L hashtables
-	for(int i = 0;i<n;i++)
+	vector<float> input_vector;
+	for(int i=0; i<n; i++)
 	{
+		if(metric==DFD)
+			input_vector = 2d::prepareCurve(input_vectors[i],delta);
+		else
+			input_vector = input_vectors[i];
 		for(int y=0;y<L;y++)
 		{
-			hashtable_item_lsh p{input_vectors[i],ID(input_vectors[i],y),i};
+			hashtable_item_lsh p{input_vector,ID(input_vector,y),i};
 			hashtables[y].insert(p.ID,p);
 		}
 	}
