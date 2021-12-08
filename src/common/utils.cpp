@@ -41,6 +41,15 @@ vector<float> snapCurve(vector<float> p, double delta){
 	return snappedCurve;
 }
 
+vector<float> concatCurve(vector<float> p,unsigned int vector_size){
+	
+}
+
+vector<float> prepareCurve(vector<float> p, double delta,unsigned int vector_size){
+	vector<float> snappedCurve = ONE_DIM::snapCurve(p, delta);
+	return ONE_DIM::concatCurve(snappedCurve,vector_size);
+}
+
 }
 
 namespace TWO_DIM
@@ -62,13 +71,13 @@ vector<vector<float>> snapCurve(vector<float> p, double delta){
 	return snappedCurve;
 }
 
-vector<float> concatCurve(vector<vector<float>> p){
+vector<float> concatCurve(vector<vector<float>> p,unsigned int vector_size){
 	vector<float> concatedCurve;
 	float _x = p[0][0];
 	float _y = p[0][1];
 	float x = p[0][0];
 	float y = p[0][1];
-	int curveLength = p.size()*2;
+	int curveLength = vector_size*2;
 	for(int i=0; i<p.size(); i++){
 		x = p[i][0];
 		y = p[i][1];
@@ -88,19 +97,18 @@ vector<float> concatCurve(vector<vector<float>> p){
 	return concatedCurve;
 }
 
-vector<float> prepareCurve(vector<float> p, double delta){
+vector<float> prepareCurve(vector<float> p, double delta,unsigned int vector_size){
 	vector<vector<float>> snappedCurve = TWO_DIM::snapCurve(p, delta);
-	return TWO_DIM::concatCurve(snappedCurve);
+	return TWO_DIM::concatCurve(snappedCurve,vector_size);
 }
 
 }
 
 
-// float continuousFrechetDistance(vector<float> p, vector<float> q)
-// {
-// 	Frechet::Continuous::Distance distance = Frechet::Continuous::distance(new Curve(p), new Curve(q));
-// 	return distance.value;
-// }
+float continuousFrechetDistance(vector<float> p, vector<float> q)
+{
+	
+}
 
 float getDiscreteFrechetDistance(vector<float> p, vector<float> q)
 {

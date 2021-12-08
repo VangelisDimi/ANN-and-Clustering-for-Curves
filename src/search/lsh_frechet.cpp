@@ -39,7 +39,7 @@ vector<pair<float,unsigned int>> LSH_Frechet::find_N_nearest(vector<float> p,uns
 {
 	//Returns indexes of N Nearest elements
 	multimap<float, int> distances;
-	vector<float> hash_vector=LSH_Frechet::prepare_curve(p,delta);
+	vector<float> hash_vector=LSH_Frechet::prepare_curve(p,delta,vectorSize);
 	for (int y=0 ; y<L ; y++)
 	{
 		unsigned long long int ID = LSH_Frechet::ID(hash_vector,y);
@@ -69,14 +69,14 @@ vector<pair<float,unsigned int>> LSH_Frechet::find_R_nearest(vector<float> p,flo
 {
 	//Returns indexes of R nearest element
 	multimap<float, int> distances;
-	vector<float> hash_vector=LSH_Frechet::prepare_curve(p,delta);
+	vector<float> hash_vector=LSH_Frechet::prepare_curve(p,delta,vectorSize);
 	for (int y=0 ; y<L ; y++)
 	{
 		unsigned long long int ID = LSH_Frechet::ID(hash_vector,y);
 		for (auto it = hashtables[y].begin(ID); it != hashtables[y].end(ID); ++it )
 		{
 			hashtable_item_lsh p_b = *it;
-			if (p_b.ID == ID)
+			if (p_b.ID == ID && hash_vector == p_b.hash_curve)
 			{
 				if(clusterMode && p_b.flag && p_b.radius_found!=R) continue;
 				float distance = LSH_Frechet::distance(p,p_b.p);
@@ -146,16 +146,17 @@ LSH_Frechet::LSH_Frechet(vector<vector<float>> input_vectors,int k,int L,int met
 		distance=&getDiscreteFrechetDistance;
 		prepare_curve=&TWO_DIM::prepareCurve;
 	}
-	// else if(metric==CFD)
-	// {
-	// 	distance=&continuousFrechetDistance;
-	// }
+	else if(metric==CFD)
+	{
+		ONE_DIM::filter(input_vectors);
+		distance=&continuousFrechetDistance;
+	}
 
 	//Add vectors to L hashtables
 	vector<float> hash_vector;
 	for(int i=0; i<n; i++)
 	{
-		hash_vector = LSH_Frechet::prepare_curve(input_vectors[i],delta);
+		hash_vector = LSH_Frechet::prepare_curve(input_vectors[i],delta,vectorSize);
 		for(int y=0;y<L;y++)
 		{
 			hashtable_item_lsh p{hash_vector,input_vectors[i],ID(hash_vector,y),i};

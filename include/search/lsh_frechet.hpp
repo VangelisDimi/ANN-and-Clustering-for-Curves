@@ -39,7 +39,7 @@ private:
 
 	float (*distance)(vector<float>, vector<float>);//Distance function
 
-	vector<float> (*prepare_curve)(vector<float>,double);
+	vector<float> (*prepare_curve)(vector<float>,double,unsigned int);
 
 	hash_table<hashtable_item_lsh> *hashtables;//Hashtables
 	int L;//Number of hashtables
