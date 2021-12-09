@@ -98,13 +98,13 @@ float getDiscreteFrechetDistance(vector<float> p, vector<float> q)
 		for(int j=0;j<p.size();j++)
 		{
 			if(i==0 && j == 0)
-				c[0][0]=eucledian_distance({0,p[0]},{0,q[0]});
+				c[0][0] = eucledian_distance({0,p[0]},{0,q[0]});
 			else if(i==0 && j>0)
-				c[i][j]= max(c[0][j-1],eucledian_distance({0,p[0]},{(float) j,q[j]}));
+				c[i][j] = max(c[0][j-1],eucledian_distance({0,p[0]},{(float) j,q[j]}));
 			else if(i>0 && j==0)
-				c[i][j]= max(c[i-1][0],eucledian_distance({(float) i,p[i]},{0,q[0]}));
+				c[i][j] = max(c[i-1][0],eucledian_distance({(float) i,p[i]},{0,q[0]}));
 			else
-				c[i][j]= max(min({c[i-1][j],c[i-1][j-1],c[i][j-1]}),eucledian_distance({(float) i,p[i]},{(float) j,q[j]}));
+				c[i][j] = max(min({c[i-1][j],c[i-1][j-1],c[i][j-1]}),eucledian_distance({(float) i,p[i]},{(float) j,q[j]}));
 		}
 	}
 	return c[p.size()-1][q.size()-1];
