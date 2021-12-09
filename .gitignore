@@ -7,8 +7,5 @@ bin/
 #Output folder
 output/
 
-#Library folder
-lib/
-
 #vscode folder
 .vscode/

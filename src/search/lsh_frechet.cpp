@@ -39,9 +39,9 @@ vector<pair<float,unsigned int>> LSH_Frechet::find_N_nearest(vector<float> p,uns
 {
 	//Returns indexes of N Nearest elements
 	multimap<float, int> distances;
-	vector<float> hash_vector=LSH_Frechet::prepare_curve(p,delta);
 	for (int y=0 ; y<L ; y++)
 	{
+		vector<float> hash_vector=LSH_Frechet::prepare_curve(p,delta,vectorSize,t_snap[y]);
 		unsigned long long int ID = LSH_Frechet::ID(hash_vector,y);
 		for (auto it = hashtables[y].begin(ID); it != hashtables[y].end(ID); ++it )
 		{
@@ -69,14 +69,14 @@ vector<pair<float,unsigned int>> LSH_Frechet::find_R_nearest(vector<float> p,flo
 {
 	//Returns indexes of R nearest element
 	multimap<float, int> distances;
-	vector<float> hash_vector=LSH_Frechet::prepare_curve(p,delta);
 	for (int y=0 ; y<L ; y++)
 	{
+		vector<float> hash_vector=LSH_Frechet::prepare_curve(p,delta,vectorSize,t_snap[y]);
 		unsigned long long int ID = LSH_Frechet::ID(hash_vector,y);
 		for (auto it = hashtables[y].begin(ID); it != hashtables[y].end(ID); ++it )
 		{
 			hashtable_item_lsh p_b = *it;
-			if (p_b.ID == ID)
+			if (p_b.ID == ID && hash_vector == p_b.hash_curve)
 			{
 				if(clusterMode && p_b.flag && p_b.radius_found!=R) continue;
 				float distance = LSH_Frechet::distance(p,p_b.p);
@@ -110,7 +110,7 @@ LSH_Frechet::LSH_Frechet(vector<vector<float>> input_vectors,int k,int L,int met
 	LSH_Frechet::L=L;
 	LSH_Frechet::k=k;
 	LSH_Frechet::delta=delta;
-	w=600;
+	w=150;
 	vectorSize=(!input_vectors.empty()) ? input_vectors[0].size() : 0;
 	n=input_vectors.size();
 	tableSize=ceil(n*hashtable_size_ratio);
@@ -146,18 +146,25 @@ LSH_Frechet::LSH_Frechet(vector<vector<float>> input_vectors,int k,int L,int met
 		distance=&getDiscreteFrechetDistance;
 		prepare_curve=&TWO_DIM::prepareCurve;
 	}
-	// else if(metric==CFD)
-	// {
-	// 	distance=&continuousFrechetDistance;
-	// }
+	else if(metric==CFD)
+	{
+		ONE_DIM::filter(input_vectors);
+		distance=&continuousFrechetDistance;
+		prepare_curve=&ONE_DIM::prepareCurve;
+	}
+
+	t_snap = new float[L];
+	for(int i=0;i<L;i++)
+	{
+		t_snap[i]=uniform_distribution_rng_float(0,delta-numeric_limits<float>::epsilon());
+	}
 
 	//Add vectors to L hashtables
-	vector<float> hash_vector;
 	for(int i=0; i<n; i++)
 	{
-		hash_vector = LSH_Frechet::prepare_curve(input_vectors[i],delta);
 		for(int y=0;y<L;y++)
 		{
+			vector<float> hash_vector = LSH_Frechet::prepare_curve(input_vectors[i],delta,vectorSize,t_snap[y]);
 			hashtable_item_lsh p{hash_vector,input_vectors[i],ID(hash_vector,y),i};
 			hashtables[y].insert(p.ID,p);
 		}
@@ -174,4 +181,5 @@ LSH_Frechet::~LSH_Frechet()//Destructor
 	}
 	delete[] t;
 	delete[] v;
+	delete[] t_snap;
 };

@@ -9,12 +9,15 @@ using namespace std;
 #include "exhaustive_search.hpp"
 
 namespace ONE_DIM{
+    void filter(vector<vector<float>> &vectors);
     vector<float> snapCurve(vector<float> p, double delta);
+    vector<float> concatCurve(vector<float> p,unsigned int vector_size);
+    vector<float> prepareCurve(vector<float> p, double delta,unsigned int vector_size,float t);
 }
 namespace TWO_DIM{
-    vector<vector<float>> snapCurve(vector<float> p, double delta);
-    vector<float> concatCurve(vector<vector<float>> p);
-    vector<float> prepareCurve(vector<float> p, double delta);
+    vector<vector<float>> snapCurve(vector<float> p, double delta,float t);
+    vector<float> concatCurve(vector<vector<float>> p,unsigned int vector_size);
+    vector<float> prepareCurve(vector<float> p, double delta,unsigned int vector_size,float t);
 }
 
 float continuousFrechetDistance(vector<float> p1, vector<float> p2);

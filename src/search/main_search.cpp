@@ -15,39 +15,17 @@
 
 using namespace std;
 
-void write_file(string output_file,
-				int n_query,vector<string> ids_query,vector<string> ids,vector<pair<float,unsigned int>> approximate_Nearest,vector<pair<float,unsigned int>> true_Nearest,
-				double avg_time_approximate,double avg_time_true,string algorithm)
+void write_file(ofstream &outfile,
+				string query_id,vector<string> ids,vector<pair<float,unsigned int>> approximate_Nearest,vector<pair<float,unsigned int>> true_Nearest,
+				string algorithm)
 {
-	struct stat info;
-	if (stat("./output",&info) == -1) {
-		mkdir("./output", 0700);
-	}
-	ofstream outfile ("./output/" + output_file, ios::out | ios::trunc);
-
-	double maf=0;
-	for (unsigned int i=0 ; i<n_query ; i++)
-	{
-		outfile << "Query: " << ids_query[i] << endl;
-		outfile << "Algorithm: " << algorithm << endl;
-		
-		outfile << "Approximate Nearest neighbor: " << ids[approximate_Nearest[i].second] << endl;
-		outfile << "True Nearest neighbor: " << ids[true_Nearest[i].second] << endl;
-		outfile << "distanceApproximate: " << approximate_Nearest[i].first << endl;
-		outfile << "distanceTrue: " << true_Nearest[i].first << endl;
-
-		if(true_Nearest[i].first!=0)
-		{
-			double af=approximate_Nearest[i].first/true_Nearest[i].first;
-			if(af>maf) maf=af;
-		}
-	}
-	outfile << endl;
-	outfile << "tApproximateAverage: " << avg_time_approximate << endl;
-	outfile << "tTrueAverage: " << avg_time_true << endl;
-	outfile << "MAF: " << maf << endl;
-
-	outfile.close();
+	outfile << "Query: " << query_id << endl;
+	outfile << "Algorithm: " << algorithm << endl;
+	
+	if(!approximate_Nearest.empty()) outfile << "Approximate Nearest neighbor: " << ids[approximate_Nearest[0].second] << endl;
+	if(!true_Nearest.empty()) outfile << "True Nearest neighbor: " << ids[true_Nearest[0].second] << endl;
+	if(!approximate_Nearest.empty()) outfile << "distanceApproximate: " << approximate_Nearest[0].first << endl;
+	if(!true_Nearest.empty()) outfile << "distanceTrue: " << true_Nearest[0].first << endl;
 }
 
 int main(int argc, char *argv[]){
@@ -155,6 +133,13 @@ int main(int argc, char *argv[]){
         }
 
 
+		struct stat info;
+		if (stat("./output",&info) == -1) {
+			mkdir("./output", 0700);
+		}
+		ofstream outfile ("./output/" + output_file, ios::out | ios::trunc);
+		double maf=0;
+
 		vector<vector<float>> vectors;
 		vector<string> ids;
 		read_file(input_file,vectors,ids);
@@ -174,21 +159,24 @@ int main(int argc, char *argv[]){
 			for (unsigned int i=0 ; i<n_query ; i++)
 			{
 				auto start_lsh = chrono::high_resolution_clock::now();
-				approximate_Nearest.push_back(lsh.find_N_nearest(vectors_query[i],1)[0]);
+				approximate_Nearest=lsh.find_N_nearest(vectors_query[i],1);
 				auto stop_lsh = chrono::high_resolution_clock::now();
 				auto elapsed_lsh = stop_lsh - start_lsh ;
 				time_approximate += chrono::duration<double>(elapsed_lsh).count();
 
 				auto start_true = chrono::high_resolution_clock::now();
-				true_Nearest.push_back(exhaustive_search(vectors_query[i],vectors,1,&eucledian_distance)[0]);
+				true_Nearest=exhaustive_search(vectors_query[i],vectors,1,&eucledian_distance);
 				auto stop_true = chrono::high_resolution_clock::now();
 				auto elapsed_true = stop_true - start_true ;
 				time_true += chrono::duration<double>(elapsed_true).count();
-			}
 
-			time_approximate/=n_query;
-			time_true/=n_query;
-			write_file(output_file,n_query,ids_query,ids,approximate_Nearest,true_Nearest,time_approximate,time_true,"LSH_Vector");
+				if(!approximate_Nearest.empty() && !true_Nearest.empty() && true_Nearest[0].first!=0)
+				{
+					double af=approximate_Nearest[0].first/true_Nearest[0].first;
+					if(af>maf) maf=af;
+				}
+				write_file(outfile,ids_query[i],ids,approximate_Nearest,true_Nearest,"LSH_Vector");
+			}
 		}
 		else if(algorithm=="Hypercube")
 		{
@@ -196,67 +184,85 @@ int main(int argc, char *argv[]){
 			for (unsigned int i=0 ; i<n_query ; i++)
 			{
 				auto start_cube = chrono::high_resolution_clock::now();
-				approximate_Nearest.push_back(cube.find_N_nearest(vectors_query[i],1)[0]);
+				approximate_Nearest=cube.find_N_nearest(vectors_query[i],1);
 				auto stop_cube = chrono::high_resolution_clock::now();
 				auto elapsed_cube = stop_cube - start_cube ;
 				time_approximate += chrono::duration<double>(elapsed_cube).count();
 
 				auto start_true = chrono::high_resolution_clock::now();
-				true_Nearest.push_back(exhaustive_search(vectors_query[i],vectors,1,&eucledian_distance)[0]);
+				true_Nearest=exhaustive_search(vectors_query[i],vectors,1,&eucledian_distance);
 				auto stop_true = chrono::high_resolution_clock::now();
 				auto elapsed_true = stop_true - start_true;
 				time_true += chrono::duration<double>(elapsed_true).count();
-			}
 
-			time_approximate/=n_query;
-			time_true/=n_query;
-			write_file(output_file,n_query,ids_query,ids,approximate_Nearest,true_Nearest,time_approximate,time_true,"Hypercube");
+				if(!approximate_Nearest.empty() && !true_Nearest.empty() && true_Nearest[0].first!=0)
+				{
+					double af=approximate_Nearest[0].first/true_Nearest[0].first;
+					if(af>maf) maf=af;
+				}
+				write_file(outfile,ids_query[i],ids,approximate_Nearest,true_Nearest,"LSH_Vector");
+			}
 		}
 		else if(algorithm=="Frechet" && metric=="discrete")
 		{
-			LSH_Frechet lsh_f(vectors,k_lsh,L_lsh,DFD,delta);
+			LSH_Frechet lsh_fd(vectors,k_lsh,L_lsh,DFD,delta);
 			for (unsigned int i=0 ; i<n_query ; i++)
 			{
 				auto start_lsh = chrono::high_resolution_clock::now();
-				approximate_Nearest.push_back(lsh_f.find_N_nearest(vectors_query[i],1)[0]);
+				approximate_Nearest=lsh_fd.find_N_nearest(vectors_query[i],1);
 				auto stop_lsh = chrono::high_resolution_clock::now();
 				auto elapsed_lsh = stop_lsh - start_lsh ;
 				time_approximate += chrono::duration<double>(elapsed_lsh).count();
 
 				auto start_true = chrono::high_resolution_clock::now();
-				true_Nearest.push_back(exhaustive_search(vectors_query[i],vectors,1,&getDiscreteFrechetDistance)[0]);
+				true_Nearest=exhaustive_search(vectors_query[i],vectors,1,&getDiscreteFrechetDistance);
 				auto stop_true = chrono::high_resolution_clock::now();
 				auto elapsed_true = stop_true - start_true ;
 				time_true += chrono::duration<double>(elapsed_true).count();
 
+
+				if(!approximate_Nearest.empty() && !true_Nearest.empty() && true_Nearest[0].first!=0)
+				{
+					double af=approximate_Nearest[0].first/true_Nearest[0].first;
+					if(af>maf) maf=af;
+				}
+				write_file(outfile,ids_query[i],ids,approximate_Nearest,true_Nearest,"LSH_Vector");
 			}
-			time_approximate/=n_query;
-			time_true/=n_query;
-			write_file(output_file,n_query,ids_query,ids,approximate_Nearest,true_Nearest,time_approximate,time_true,"Discrete_Frechet_LSH");
 		}
 		else if(algorithm=="Frechet" && metric=="continuous")
 		{
-			// LSH lsh(vectors,k_lsh,L_lsh,CFD);
-			// for (unsigned int i=0 ; i<n_query ; i++)
-			// {
-			// 	auto start_lsh = chrono::high_resolution_clock::now();
-			// 	approximate_Nearest.push_back(lsh.find_N_nearest(vectors_query[i],1)[0]);
-			// 	auto stop_lsh = chrono::high_resolution_clock::now();
-			// 	auto elapsed_lsh = stop_lsh - start_lsh ;
-			// 	time_approximate += chrono::duration<double>(elapsed_lsh).count();
+			LSH lsh_fc(vectors,k_lsh,L_lsh,CFD);
+			ONE_DIM::filter(vectors_query);
+			for (unsigned int i=0 ; i<n_query ; i++)
+			{
+				auto start_lsh = chrono::high_resolution_clock::now();
+				approximate_Nearest=lsh_fc.find_N_nearest(vectors_query[i],1);
+				auto stop_lsh = chrono::high_resolution_clock::now();
+				auto elapsed_lsh = stop_lsh - start_lsh ;
+				time_approximate += chrono::duration<double>(elapsed_lsh).count();
 
-			// 	auto start_true = chrono::high_resolution_clock::now();
-			// 	true_Nearest.push_back(exhaustive_search(vectors_query[i],vectors,1,&continuousFrechetDistance)[0]);
-			// 	auto stop_true = chrono::high_resolution_clock::now();
-			// 	auto elapsed_true = stop_true - start_true ;
-			// 	time_true += chrono::duration<double>(elapsed_true).count();
+				auto start_true = chrono::high_resolution_clock::now();
+				true_Nearest=exhaustive_search(vectors_query[i],vectors,1,&continuousFrechetDistance);
+				auto stop_true = chrono::high_resolution_clock::now();
+				auto elapsed_true = stop_true - start_true ;
+				time_true += chrono::duration<double>(elapsed_true).count();
 
-			// }
-			// time_approximate/=n_query;
-			// time_true/=n_query;
-			// write_file(output_file,n_query,ids_query,ids,approximate_Nearest,true_Nearest,time_approximate,time_true,"Continuous_Frechet_LSH");
-
+				if(!approximate_Nearest.empty() && !true_Nearest.empty() && true_Nearest[0].first!=0)
+				{
+					double af=approximate_Nearest[0].first/true_Nearest[0].first;
+					if(af>maf) maf=af;
+				}
+				write_file(outfile,ids_query[i],ids,approximate_Nearest,true_Nearest,"LSH_Vector");
+			}
 		}
+
+		time_approximate/=n_query;
+		time_true/=n_query;
+		outfile << endl;
+		outfile << "tApproximateAverage: " << time_approximate << endl;
+		outfile << "tTrueAverage: " << time_true << endl;
+		outfile << "MAF: " << maf << endl;
+		outfile.close();
 
         string option;
 		cout << "Enter /exit to exit program.\n";

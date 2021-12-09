@@ -13,20 +13,61 @@
 #include <stdlib.h>    
 #include "utils.hpp"
 
-// #include "frechet.hpp"
-// #include "curve.hpp"
+#include "frechet.hpp"
+#include "curve.hpp"
 
 using namespace std;
 
 namespace ONE_DIM
 {
 
+void filter(vector<vector<float>> &vectors)
+{
+	for(unsigned int i=0;i<vectors.size();i++)
+	{
+		for(unsigned int y=1;y<vectors[i].size()-1;y++)
+		{
+			if(abs(vectors[i][y+1]-vectors[i][y])<numeric_limits<float>::epsilon() && abs(vectors[i][y]-vectors[i][y-1])<numeric_limits<float>::epsilon())
+				vectors[i].erase(vectors[i].begin() + y);
+		}
+	}
+}
+
 vector<float> snapCurve(vector<float> p, double delta){
 	vector<float> snappedCurve;
 	for(int i=0; i<p.size(); i++){
-		snappedCurve.push_back(delta*floor(p[i] + delta/2));
+		snappedCurve.push_back(floor(p[i]/delta)*delta);
 	}
 	return snappedCurve;
+}
+
+vector<float> concatCurve(vector<float> p,unsigned int vector_size){
+	int curveLength = vector_size*2;
+
+	vector<float> concatedCurve;
+	int prev=1;
+	int next=1;
+	for(int i=0;i<p.size();i++)
+	{
+		if(i==0) prev=i+1;
+		else prev=i-1;
+		if(i==p.size()-1) next=i-1;
+		else next=i+1;
+
+		if(p[i]>=min(p[prev],p[next]) && p[i]<=max(p[prev],p[next]))
+			continue;
+		concatedCurve.push_back(p[i]);
+	}
+
+	if( curveLength > concatedCurve.size() )
+		for(int i=0; i>curveLength-concatedCurve.size(); i++)
+			concatedCurve.push_back(std::numeric_limits<float>::max()-5);
+	return concatedCurve;
+}
+
+vector<float> prepareCurve(vector<float> p, double delta,unsigned int vector_size,float t){
+	vector<float> snappedCurve = ONE_DIM::snapCurve(p, delta);
+	return ONE_DIM::concatCurve(snappedCurve,vector_size);
 }
 
 }
@@ -34,7 +75,7 @@ vector<float> snapCurve(vector<float> p, double delta){
 namespace TWO_DIM
 {
 
-vector<vector<float>> snapCurve(vector<float> p, double delta){
+vector<vector<float>> snapCurve(vector<float> p, double delta,float t){
 	float _x = 0.0;
 	float _y = 0.0;
 	float x = 0.0;
@@ -42,21 +83,21 @@ vector<vector<float>> snapCurve(vector<float> p, double delta){
 	vector<vector<float>> snappedCurve;
 	for(int i=0; i<p.size(); i++){
 		_y = p[i];
-		x  = delta*floor(_x + delta/2);
-		y  = delta*floor(_y + delta/2);
+		x  = floor(abs(_x-t)/delta+1/2)*delta + t;
+		y  = floor(abs(_y-t)/delta+1/2)*delta + t;
 		_x += 1;
 		snappedCurve.push_back({x,y});
 	}
 	return snappedCurve;
 }
 
-vector<float> concatCurve(vector<vector<float>> p){
+vector<float> concatCurve(vector<vector<float>> p,unsigned int vector_size){
 	vector<float> concatedCurve;
 	float _x = p[0][0];
 	float _y = p[0][1];
 	float x = p[0][0];
 	float y = p[0][1];
-	int curveLength = p.size()*2;
+	int curveLength = vector_size*2;
 	for(int i=0; i<p.size(); i++){
 		x = p[i][0];
 		y = p[i][1];
@@ -76,19 +117,29 @@ vector<float> concatCurve(vector<vector<float>> p){
 	return concatedCurve;
 }
 
-vector<float> prepareCurve(vector<float> p, double delta){
-	vector<vector<float>> snappedCurve = TWO_DIM::snapCurve(p, delta);
-	return TWO_DIM::concatCurve(snappedCurve);
+vector<float> prepareCurve(vector<float> p, double delta,unsigned int vector_size,float t){
+	vector<vector<float>> snappedCurve = TWO_DIM::snapCurve(p, delta,t);
+	return TWO_DIM::concatCurve(snappedCurve,vector_size);
 }
 
 }
 
 
-// float continuousFrechetDistance(vector<float> p, vector<float> q)
-// {
-// 	Frechet::Continuous::Distance distance = Frechet::Continuous::distance(new Curve(p), new Curve(q));
-// 	return distance.value;
-// }
+float continuousFrechetDistance(vector<float> p, vector<float> q)
+{
+	// Point _p[p.size()]; 
+	// Point _q[q.size()];
+	// for(int i = 0 ; i < p.size() ; i++)
+	// {
+	// 	_p[i]=Point(p[i]);
+	// }
+	// for(int y = 0 ; y < q.size() ; y++)
+	// {
+	// 	_q[i]=Point(q[i]);
+	// }
+
+	// return Frechet::Continuous::distance(Curve(Points((curve_size_t) p.size(),_p)),Curve(Points((curve_size_t) q.size(),_q))).value;
+}
 
 float getDiscreteFrechetDistance(vector<float> p, vector<float> q)
 {
