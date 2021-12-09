@@ -44,9 +44,9 @@ vector<pair<float,unsigned int>> LSH_Frechet::find_N_nearest(vector<float> p,uns
 		vector<float> hash_vector=LSH_Frechet::prepare_curve(p,delta,vectorSize,t_snap[y]);
 		unsigned long long int ID = LSH_Frechet::ID(hash_vector,y);
 		for (auto it = hashtables[y].begin(ID); it != hashtables[y].end(ID); ++it )
-		{
+		{	
 			hashtable_item_lsh p_b = *it;
-			if (hash_vector == p_b.hash_curve)
+			if (p_b.ID == ID)
 			{
 				float distance = LSH_Frechet::distance(p,p_b.p);
 				if(distances.find(distance) == distances.end() || distances.find(distance)->second != p_b.index)
@@ -76,7 +76,7 @@ vector<pair<float,unsigned int>> LSH_Frechet::find_R_nearest(vector<float> p,flo
 		for (auto it = hashtables[y].begin(ID); it != hashtables[y].end(ID); ++it )
 		{
 			hashtable_item_lsh p_b = *it;
-			if (p_b.ID == ID && hash_vector == p_b.hash_curve)
+			if (p_b.ID == ID)
 			{
 				if(clusterMode && p_b.flag && p_b.radius_found!=R) continue;
 				float distance = LSH_Frechet::distance(p,p_b.p);

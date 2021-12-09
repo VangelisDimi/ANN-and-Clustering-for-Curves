@@ -23,11 +23,12 @@ namespace ONE_DIM
 
 void filter(vector<vector<float>> &vectors)
 {
+	double e=0.5;
 	for(unsigned int i=0;i<vectors.size();i++)
 	{
 		for(unsigned int y=1;y<vectors[i].size()-1;y++)
 		{
-			if(abs(vectors[i][y+1]-vectors[i][y])<numeric_limits<float>::epsilon() && abs(vectors[i][y]-vectors[i][y-1])<numeric_limits<float>::epsilon())
+			if(abs(vectors[i][y+1]-vectors[i][y])<e && abs(vectors[i][y]-vectors[i][y-1])<e)
 				vectors[i].erase(vectors[i].begin() + y);
 		}
 	}
@@ -83,8 +84,8 @@ vector<vector<float>> snapCurve(vector<float> p, double delta,float t){
 	vector<vector<float>> snappedCurve;
 	for(int i=0; i<p.size(); i++){
 		_y = p[i];
-		x  = floor(abs(_x-t)/delta+1/2)*delta + t;
-		y  = floor(abs(_y-t)/delta+1/2)*delta + t;
+		x  = floor(abs(_x-t)/delta+(1/2))*delta + t;
+		y  = floor(abs(_y-t)/delta+(1/2))*delta + t;
 		_x += 1;
 		snappedCurve.push_back({x,y});
 	}
