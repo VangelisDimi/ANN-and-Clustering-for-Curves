@@ -236,25 +236,26 @@ int main(int argc, char *argv[]){
 		}
 		else if(algorithm=="Frechet" && metric=="continuous")
 		{
-			// LSH lsh_fc(vectors,k_lsh,L_lsh,CFD);
-			// for (unsigned int i=0 ; i<n_query ; i++)
-			// {
-			// 	auto start_lsh = chrono::high_resolution_clock::now();
-			// 	approximate_Nearest.push_back(lsh_fc.find_N_nearest(vectors_query[i],1)[0]);
-			// 	auto stop_lsh = chrono::high_resolution_clock::now();
-			// 	auto elapsed_lsh = stop_lsh - start_lsh ;
-			// 	time_approximate += chrono::duration<double>(elapsed_lsh).count();
+			LSH lsh_fc(vectors,k_lsh,L_lsh,CFD);
+			ONE_DIM::filter(vectors_query);
+			for (unsigned int i=0 ; i<n_query ; i++)
+			{
+				auto start_lsh = chrono::high_resolution_clock::now();
+				approximate_Nearest.push_back(lsh_fc.find_N_nearest(vectors_query[i],1)[0]);
+				auto stop_lsh = chrono::high_resolution_clock::now();
+				auto elapsed_lsh = stop_lsh - start_lsh ;
+				time_approximate += chrono::duration<double>(elapsed_lsh).count();
 
-			// 	auto start_true = chrono::high_resolution_clock::now();
-			// 	true_Nearest.push_back(exhaustive_search(vectors_query[i],vectors,1,&continuousFrechetDistance)[0]);
-			// 	auto stop_true = chrono::high_resolution_clock::now();
-			// 	auto elapsed_true = stop_true - start_true ;
-			// 	time_true += chrono::duration<double>(elapsed_true).count();
+				auto start_true = chrono::high_resolution_clock::now();
+				true_Nearest.push_back(exhaustive_search(vectors_query[i],vectors,1,&continuousFrechetDistance)[0]);
+				auto stop_true = chrono::high_resolution_clock::now();
+				auto elapsed_true = stop_true - start_true ;
+				time_true += chrono::duration<double>(elapsed_true).count();
 
-			// }
-			// time_approximate/=n_query;
-			// time_true/=n_query;
-			// write_file(output_file,n_query,ids_query,ids,approximate_Nearest,true_Nearest,time_approximate,time_true,"Continuous_Frechet_LSH");
+			}
+			time_approximate/=n_query;
+			time_true/=n_query;
+			write_file(output_file,n_query,ids_query,ids,approximate_Nearest,true_Nearest,time_approximate,time_true,"Continuous_Frechet_LSH");
 		}
 
         string option;

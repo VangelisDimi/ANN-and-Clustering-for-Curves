@@ -34,13 +34,14 @@ run_search: compile_search
 
 
 #lib
+LIB_FLAGS = -march=native -Ofast -static-libgcc -static-libstdc++ -std=c++14 -fpermissive -fPIC -ffast-math -fno-trapping-math -ftree-vectorize
 compile_lib:
 	mkdir -p ./bin/lib
-	g++ -c ./lib/Fred/src/frechet.cpp -o ./bin/lib/frechet.o -I./lib/Fred/include
-	g++ -c ./lib/Fred/src/curve.cpp -o ./bin/lib/curve.o -I./lib/Fred/include
-	g++ -c ./lib/Fred/src/config.cpp -o ./bin/lib/config.o -I./lib/Fred/include
-	g++ -c ./lib/Fred/src/simplification.cpp -o ./bin/lib/simplification.o -I./lib/Fred/include
-	g++ -c ./lib/Fred/src/point.cpp -o ./bin/lib/point.o -I./lib/Fred/include
+	g++ -c ./lib/Fred/src/frechet.cpp -o ./bin/lib/frechet.o -I./lib/Fred/include $(LIB_FLAGS)
+	g++ -c ./lib/Fred/src/curve.cpp -o ./bin/lib/curve.o -I./lib/Fred/include $(LIB_FLAGS)
+	g++ -c ./lib/Fred/src/config.cpp -o ./bin/lib/config.o -I./lib/Fred/include $(LIB_FLAGS)
+	g++ -c ./lib/Fred/src/simplification.cpp -o ./bin/lib/simplification.o -I./lib/Fred/include $(LIB_FLAGS)
+	g++ -c ./lib/Fred/src/point.cpp -o ./bin/lib/point.o -I./lib/Fred/include $(LIB_FLAGS)
 	   
 
 mkdir:
