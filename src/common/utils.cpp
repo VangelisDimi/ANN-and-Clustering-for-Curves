@@ -42,11 +42,11 @@ vector<float> snapCurve(vector<float> p, double delta){
 }
 
 vector<float> concatCurve(vector<float> p,unsigned int vector_size){
-	int curveLength = vector_size*2;
+	int curveLength = vector_size;
 
 	vector<float> concatedCurve;
-	int prev=1;
-	int next=1;
+	int prev;
+	int next;
 	for(int i=0;i<p.size();i++)
 	{
 		if(i==0) prev=i+1;
@@ -296,7 +296,7 @@ int uniform_distribution_rng(int lowerRange,int higherRange)
 	return distr(generator);
 }  
 
-int uniform_distribution_rng_float(float lowerRange,float higherRange)
+float uniform_distribution_rng_float(float lowerRange,float higherRange)
 {
 	random_device rand_dev;
 	mt19937 generator(rand_dev());

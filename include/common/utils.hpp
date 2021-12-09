@@ -26,7 +26,7 @@ float eucledian_distance(vector<float>,vector<float>);
 void read_file(string filename,vector<vector<float>> &vectors,vector<string> &ids);
 float normal_distribution_rng();
 int uniform_distribution_rng(int lowerRange,int higherRange);
-int uniform_distribution_rng_float(float lowerRange,float higherRange);
+float uniform_distribution_rng_float(float lowerRange,float higherRange);
 unsigned long long int modulo(long long int a,long long int b);
 float inner_product(vector <float> v1,vector <float> v2);
 int getHammingDistance(string first, string second);

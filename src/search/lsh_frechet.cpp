@@ -46,7 +46,7 @@ vector<pair<float,unsigned int>> LSH_Frechet::find_N_nearest(vector<float> p,uns
 		for (auto it = hashtables[y].begin(ID); it != hashtables[y].end(ID); ++it )
 		{
 			hashtable_item_lsh p_b = *it;
-			if (p_b.ID == ID)
+			if (hash_vector == p_b.hash_curve)
 			{
 				float distance = LSH_Frechet::distance(p,p_b.p);
 				if(distances.find(distance) == distances.end() || distances.find(distance)->second != p_b.index)
