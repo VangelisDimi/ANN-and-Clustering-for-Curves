@@ -104,7 +104,7 @@ void cluster::update_MV()
     }
 }
 
-void cluster::update_MC()
+void cluster::update_MF()
 {
     
 }
@@ -112,7 +112,7 @@ void cluster::update_MC()
 void cluster::new_centroids()
 {
     if(update==MEAN_V) update_MV();
-    else if(update==MEAN_F) update_MC();
+    else if(update==MEAN_F) update_MF();
 }
 
 vector<cluster::centroid> cluster::get_clusters()

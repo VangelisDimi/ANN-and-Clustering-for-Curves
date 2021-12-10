@@ -55,10 +55,10 @@ protected:
 
 
     float (*distance)(vector<float>, vector<float>);//Distance function
+private:
     string update;
-
     void update_MV();
-    void update_MC();
+    void update_MF();
 };
 
 class cluster_lloyds : public cluster
