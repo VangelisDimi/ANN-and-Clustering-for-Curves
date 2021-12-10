@@ -100,18 +100,18 @@ vector<vector<float>> snapCurve(vector<float> p, double delta,float t){
 
 vector<float> concatCurve(vector<vector<float>> p,unsigned int vector_size){
 	//Remove duplicates
-	unsigned int y=1;
-	while(y<p.size())
+	unsigned int i=1;
+	while(i<p.size())
 	{
-		float x = p[y][0];
-		float y = p[y][1];
-		float _x = p[y-1][0];
-		float _y = p[y-1][1];
+		float x = p[i][0];
+		float y = p[i][1];
+		float _x = p[i-1][0];
+		float _y = p[i-1][1];
 		if( x == _x && y == _y ){
-			p.erase(p.begin() + y);
+			p.erase(p.begin() + i);
 			continue;
 		}
-		y++;
+		i++;
 	}
 
 	//Concat
