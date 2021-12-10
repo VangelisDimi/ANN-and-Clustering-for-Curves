@@ -26,10 +26,15 @@ void filter(vector<vector<float>> &vectors)
 	double e=0.5;
 	for(unsigned int i=0;i<vectors.size();i++)
 	{
-		for(unsigned int y=1;y<vectors[i].size()-1;y++)
+		unsigned int y=1;
+		while(y<vectors[i].size()-1)
 		{
 			if(abs(vectors[i][y+1]-vectors[i][y])<e && abs(vectors[i][y]-vectors[i][y-1])<e)
+			{
 				vectors[i].erase(vectors[i].begin() + y);
+				continue;
+			}
+			y++;
 		}
 	}
 }
@@ -45,25 +50,26 @@ vector<float> snapCurve(vector<float> p, double delta){
 vector<float> concatCurve(vector<float> p,unsigned int vector_size){
 	int curveLength = vector_size;
 
-	vector<float> concatedCurve;
 	int prev;
 	int next;
-	for(int i=0;i<p.size();i++)
+	unsigned int i=1;
+	while (i<p.size()-1)
 	{
-		if(i==0) prev=i+1;
-		else prev=i-1;
-		if(i==p.size()-1) next=i-1;
-		else next=i+1;
+		prev=i-1;
+		next=i+1;
 
 		if(p[i]>=min(p[prev],p[next]) && p[i]<=max(p[prev],p[next]))
+		{			
+			p.erase(p.begin() + i);
 			continue;
-		concatedCurve.push_back(p[i]);
+		}
+		i++;
 	}
 
-	if( curveLength > concatedCurve.size() )
-		for(int i=0; i>curveLength-concatedCurve.size(); i++)
-			concatedCurve.push_back(std::numeric_limits<float>::max()-5);
-	return concatedCurve;
+	if( curveLength > p.size() )
+		for(int i=0; i>curveLength-p.size(); i++)
+			p.push_back(std::numeric_limits<float>::max()-5);
+	return p;
 }
 
 vector<float> prepareCurve(vector<float> p, double delta,unsigned int vector_size,float t){
@@ -93,25 +99,32 @@ vector<vector<float>> snapCurve(vector<float> p, double delta,float t){
 }
 
 vector<float> concatCurve(vector<vector<float>> p,unsigned int vector_size){
-	vector<float> concatedCurve;
-	float _x = p[0][0];
-	float _y = p[0][1];
-	float x = p[0][0];
-	float y = p[0][1];
-	int curveLength = vector_size*2;
-	for(int i=0; i<p.size(); i++){
-		x = p[i][0];
-		y = p[i][1];
+	//Remove duplcicates
+	unsigned int y=1;
+	while(y<p.size()-1)
+	{
+		float x = p[y][0];
+		float y = p[y][1];
+		float _x = p[y-1][0];
+		float _y = p[y-1][1];
 		if( x == _x && y == _y ){
-			_x = x;
-			_y = y;
+			p.erase(p.begin() + y);
 			continue;
 		}
+		y++;
+	}
+
+	//Concat
+	int curveLength = vector_size*2;
+	vector<float> concatedCurve;
+	for(int i=0; i<p.size(); i++){
+		float x = p[i][0];
+		float y = p[i][1];
 		concatedCurve.push_back(x);
 		concatedCurve.push_back(y);
-		_x = x;
-		_y = y;
 	}
+
+	//Pad
 	if( curveLength > concatedCurve.size() )
 		for(int i=0; i>curveLength-concatedCurve.size(); i++)
 			concatedCurve.push_back(std::numeric_limits<float>::max()-5);
