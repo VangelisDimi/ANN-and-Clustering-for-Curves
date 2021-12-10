@@ -8,13 +8,17 @@
 #include <getopt.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <chrono>
 
 #include "cluster.hpp"
-#include "cluster_ANN.hpp"
+//#include "cluster_ANN.hpp"
+#include "utils.hpp"
 
 using namespace std;
 
-void write_file(string output_file,vector<cluster::centroid> centroids,pair<vector<float>,float> silhouettes,vector<string> ids,double time_cluster,string algorithm,bool complete,bool silhouette)
+void write_file(string output_file,
+				vector<cluster::centroid> centroids,pair<vector<float>,float> silhouettes,vector<string> ids,
+				double time_cluster,string algorithm,bool complete,bool silhouette,string update)
 {
 	struct stat info;
 	if (stat("./output",&info) == -1) {
@@ -30,10 +34,22 @@ void write_file(string output_file,vector<cluster::centroid> centroids,pair<vect
 		outfile<<", centroid: ";
 		
 		outfile<<"[";
+		int y=0;
 		for(auto it = centroids[i].coordinates.begin(); it != centroids[i].coordinates.end(); ++it)
 		{
-			outfile<<*it;
-			if(next(it,1)!=centroids[i].coordinates.end()) outfile<<",";
+			if(update==MEAN_V)
+			{
+				outfile<<*it;
+				if(next(it,1)!=centroids[i].coordinates.end()) outfile<<",";
+			}
+			else if(update==MEAN_F)
+			{
+				outfile<<"("<<y<<",";
+				outfile<<*it;
+				outfile<<")";
+				if(next(it,1)!=centroids[i].coordinates.end()) outfile<<",";
+			}
+			y++;
 		}
 		outfile<<"]}"<<endl;
 	}
@@ -42,6 +58,7 @@ void write_file(string output_file,vector<cluster::centroid> centroids,pair<vect
 
 	if(silhouette)
 	{
+		outfile<<endl;
 		outfile << "Silhouette: [";
 		for(auto it = silhouettes.first.begin(); it < silhouettes.first.end(); ++it)
 		{
@@ -52,15 +69,28 @@ void write_file(string output_file,vector<cluster::centroid> centroids,pair<vect
 
 	if(complete)
 	{
+		outfile<<endl;
 		for (int i = 0; i < (int) centroids.size(); i++)
 		{
 			outfile<<"CLUSTER-"<<i+1;
 			outfile<<" { ";
 			outfile<<"[";
+			int y=0;
 			for(auto it = centroids[i].coordinates.begin(); it != centroids[i].coordinates.end(); ++it)
 			{
-				outfile<<*it;
-				if(next(it,1)!=centroids[i].coordinates.end()) outfile<<",";
+				if(update==MEAN_V)
+				{
+					outfile<<*it;
+					if(next(it,1)!=centroids[i].coordinates.end()) outfile<<",";
+				}
+				else if(update==MEAN_F)
+				{
+					outfile<<"("<<y<<",";
+					outfile<<*it;
+					outfile<<")";
+					if(next(it,1)!=centroids[i].coordinates.end()) outfile<<",";
+				}
+				y++;
 			}
 			outfile<<"]";
 
@@ -189,11 +219,21 @@ int main(int argc, char *argv[]){
 		cin>>K_cluster;
 	}
 
-
-	
 	vector<vector<float>> vectors;
 	vector<string> ids;
 	read_file(input_file,vectors,ids);
+	if(assignment=="Classic" && (update==MEAN_V || update==MEAN_F))
+	{
+		pair<vector<float>,float> silhouettes;
+		auto start_cluster = chrono::high_resolution_clock::now();
+		cluster_lloyds cluster(K_cluster,vectors,update);
+		auto stop_cluster = chrono::high_resolution_clock::now();
+		auto elapsed_cluster = stop_cluster - start_cluster ;
+		double time_cluster = chrono::duration<double>(elapsed_cluster).count();
+
+		if(silhouette) silhouettes=cluster.get_silhouettes_average();
+		write_file(output_file,cluster.get_clusters(),silhouettes,ids,time_cluster,"Lloyds with "+update,complete,silhouette,update);
+	}
 
 	
 	return 0;

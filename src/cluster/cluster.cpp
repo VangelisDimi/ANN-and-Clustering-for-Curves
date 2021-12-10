@@ -9,11 +9,15 @@
 #include "utils.hpp"
 
 //Cluster parent class
-cluster::cluster(int K,vector<vector<float>> vectors)
+cluster::cluster(int K,vector<vector<float>> vectors,string update)
 {
     cluster::K=K;
     cluster::vectorSize=(!vectors.empty()) ? vectors[0].size() : 0;
     cluster::n=vectors.size();
+
+    cluster::update=update;
+    if(update==MEAN_V) distance=&eucledian_distance;
+    if(update==MEAN_F) distance=&getDiscreteFrechetDistance;
 
     //K-Means++ initialization
     vector<int> non_centroids(n);
@@ -33,7 +37,7 @@ cluster::cluster(int K,vector<vector<float>> vectors)
         centroid c;
         for (int i : non_centroids)
         {
-            float distance=eucledian_distance(vectors[i],centroids.back().coordinates);
+            float distance=cluster::distance(vectors[i],centroids.back().coordinates);
             if(distance<D[i]) 
             {
                 D[i]=distance;
@@ -72,7 +76,7 @@ cluster::cluster(int K,vector<vector<float>> vectors)
     }
 }
 
-void cluster::new_centroids()
+void cluster::update_MV()
 {
     //Create new centroids by calculating mean vector
     vector<vector<float>> new_centroids;
@@ -98,7 +102,18 @@ void cluster::new_centroids()
         centroids[i].coordinates=new_centroids[i];
         centroids[i].vectors.clear();
     }
-};
+}
+
+void cluster::update_MC()
+{
+    
+}
+
+void cluster::new_centroids()
+{
+    if(update==MEAN_V) update_MV();
+    else if(update==MEAN_F) update_MC();
+}
 
 vector<cluster::centroid> cluster::get_clusters()
 {
@@ -123,7 +138,7 @@ pair<vector<float>,float> cluster::get_silhouettes_average()
             for (int a = 0; a < centroids[i].vectors.size(); a++)
             {
                 if(a==v) continue;
-                a_vector+=eucledian_distance(centroids[i].vectors[v].p,centroids[i].vectors[a].p);
+                a_vector+=cluster::distance(centroids[i].vectors[v].p,centroids[i].vectors[a].p);
             }
             a_vector/=centroids[i].vectors.size()-1;
 
@@ -133,7 +148,7 @@ pair<vector<float>,float> cluster::get_silhouettes_average()
             {
                 if (c==i) continue;
                 
-                float distance=eucledian_distance(centroids[i].vectors[v].p,centroids[c].coordinates);
+                float distance=cluster::distance(centroids[i].vectors[v].p,centroids[c].coordinates);
                 if(distance<minimum)
                 {
                     minimum=distance;
@@ -142,7 +157,7 @@ pair<vector<float>,float> cluster::get_silhouettes_average()
             }
             for (int b = 0; b < centroids[minimum_index].vectors.size(); b++)
             {
-                b_vector+=eucledian_distance(centroids[i].vectors[v].p,centroids[minimum_index].vectors[b].p);
+                b_vector+=cluster::distance(centroids[i].vectors[v].p,centroids[minimum_index].vectors[b].p);
             }
             b_vector/=centroids[minimum_index].vectors.size();
 
@@ -176,7 +191,7 @@ bool cluster::convergence(vector<centroid> centroids_old)
 }
 
 //Cluster Lloyd's
-cluster_lloyds::cluster_lloyds(int K,vector<vector<float>> vectors) : cluster(K,vectors)
+cluster_lloyds::cluster_lloyds(int K,vector<vector<float>> vectors,string update) : cluster(K,vectors,update)
 {
     //First assignment
     for(int i=0;i<n;i++)
@@ -186,7 +201,7 @@ cluster_lloyds::cluster_lloyds(int K,vector<vector<float>> vectors) : cluster(K,
         int minimum_index;
         for (int v=0;v<K;v++)
         {
-            float distance=eucledian_distance(vectors[i],centroids[v].coordinates);
+            float distance=cluster::distance(vectors[i],centroids[v].coordinates);
             if(distance<minimum)
             {
                 minimum=distance;
@@ -208,7 +223,7 @@ cluster_lloyds::cluster_lloyds(int K,vector<vector<float>> vectors) : cluster(K,
             int minimum_index;
             for (int v=0;v<K;v++)
             {
-                float distance=eucledian_distance(vectors[i],centroids[v].coordinates);
+                float distance=cluster::distance(vectors[i],centroids[v].coordinates);
                 if(distance<minimum)
                 {
                     minimum=distance;
