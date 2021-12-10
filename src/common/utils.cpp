@@ -99,9 +99,9 @@ vector<vector<float>> snapCurve(vector<float> p, double delta,float t){
 }
 
 vector<float> concatCurve(vector<vector<float>> p,unsigned int vector_size){
-	//Remove duplcicates
+	//Remove duplicates
 	unsigned int y=1;
-	while(y<p.size()-1)
+	while(y<p.size())
 	{
 		float x = p[y][0];
 		float y = p[y][1];
