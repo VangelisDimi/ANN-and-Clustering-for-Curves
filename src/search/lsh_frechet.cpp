@@ -141,24 +141,28 @@ LSH_Frechet::LSH_Frechet(vector<vector<float>> input_vectors,int k,int L,int met
 		}
 	}
 
+	t_snap = new float*[L];
 	if(metric==DFD)
 	{
 		distance=&getDiscreteFrechetDistance;
 		prepare_curve=&TWO_DIM::prepareCurve;
+		for(int i=0;i<L;i++)
+		{
+			t_snap[i]=new float[2];
+			t_snap[i][0]=uniform_distribution_rng_float(0,delta-numeric_limits<float>::epsilon());
+			t_snap[i][1]=uniform_distribution_rng_float(0,delta-numeric_limits<float>::epsilon());
+		}
 	}
 	else if(metric==CFD)
 	{
 		ONE_DIM::filter(input_vectors);
 		distance=&continuousFrechetDistance;
 		prepare_curve=&ONE_DIM::prepareCurve;
-	}
-
-	t_snap = new float*[L];
-	for(int i=0;i<L;i++)
-	{
-		t_snap[i]=new float[2];
-		t_snap[i][0]=uniform_distribution_rng_float(0,delta-numeric_limits<float>::epsilon());
-		t_snap[i][1]=uniform_distribution_rng_float(0,delta-numeric_limits<float>::epsilon());
+		for(int i=0;i<L;i++)
+		{
+			t_snap[i]=new float[1];
+			t_snap[i][0]=uniform_distribution_rng_float(0,delta-numeric_limits<float>::epsilon());
+		}
 	}
 
 	//Add vectors to L hashtables

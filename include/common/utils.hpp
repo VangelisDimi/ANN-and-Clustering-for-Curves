@@ -10,7 +10,7 @@ using namespace std;
 
 namespace ONE_DIM{
     void filter(vector<vector<float>> &vectors);
-    vector<float> snapCurve(vector<float> p, double delta);
+    vector<float> snapCurve(vector<float> p, double delta,float t);
     vector<float> concatCurve(vector<float> p,unsigned int vector_size);
     vector<float> prepareCurve(vector<float> p, double delta,unsigned int vector_size,float *t);
 }
