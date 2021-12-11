@@ -153,10 +153,12 @@ LSH_Frechet::LSH_Frechet(vector<vector<float>> input_vectors,int k,int L,int met
 		prepare_curve=&ONE_DIM::prepareCurve;
 	}
 
-	t_snap = new float[L];
+	t_snap = new float*[L];
 	for(int i=0;i<L;i++)
 	{
-		t_snap[i]=uniform_distribution_rng_float(0,delta-numeric_limits<float>::epsilon());
+		t_snap[i]=new float[2];
+		t_snap[i][0]=uniform_distribution_rng_float(0,delta-numeric_limits<float>::epsilon());
+		t_snap[i][1]=uniform_distribution_rng_float(0,delta-numeric_limits<float>::epsilon());
 	}
 
 	//Add vectors to L hashtables
@@ -178,6 +180,7 @@ LSH_Frechet::~LSH_Frechet()//Destructor
 	{
 		delete[] t[i];
 		delete[] v[i];
+		delete[] t_snap[i];
 	}
 	delete[] t;
 	delete[] v;

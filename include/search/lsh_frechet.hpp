@@ -38,13 +38,13 @@ private:
 	int vectorSize;
 
 	float (*distance)(vector<float>, vector<float>);//Distance function
-	vector<float> (*prepare_curve)(vector<float>,double,unsigned int,float);
+	vector<float> (*prepare_curve)(vector<float>,double,unsigned int,float*);
 
 	hash_table<hashtable_item_lsh> *hashtables;//Hashtables
 	int L;//Number of hashtables
 	int k;//Number of hash functions
 	double delta;
-	float *t_snap;
+	float **t_snap;
 	vector<int> r;//r vector used by g
 	vector<float> **v;//Random vector used by hash function
 	float **t;//Random number used by hash function

@@ -72,7 +72,7 @@ vector<float> concatCurve(vector<float> p,unsigned int vector_size){
 	return p;
 }
 
-vector<float> prepareCurve(vector<float> p, double delta,unsigned int vector_size,float t){
+vector<float> prepareCurve(vector<float> p, double delta,unsigned int vector_size,float *t){
 	vector<float> snappedCurve = ONE_DIM::snapCurve(p, delta);
 	return ONE_DIM::concatCurve(snappedCurve,vector_size);
 }
@@ -82,7 +82,7 @@ vector<float> prepareCurve(vector<float> p, double delta,unsigned int vector_siz
 namespace TWO_DIM
 {
 
-vector<vector<float>> snapCurve(vector<float> p, double delta,float t){
+vector<vector<float>> snapCurve(vector<float> p, double delta,float *t){
 	float _x = 0.0;
 	float _y = 0.0;
 	float x = 0.0;
@@ -90,8 +90,8 @@ vector<vector<float>> snapCurve(vector<float> p, double delta,float t){
 	vector<vector<float>> snappedCurve;
 	for(int i=0; i<p.size(); i++){
 		_y = p[i];
-		x  = floor(abs(_x-t)/delta+(1/2))*delta + t;
-		y  = floor(abs(_y-t)/delta+(1/2))*delta + t;
+		x  = floor((_x-t[0])/delta+(1/2))*delta + t[0];
+		y  = floor((_y-t[1])/delta+(1/2))*delta + t[1];
 		_x += 1;
 		snappedCurve.push_back({x,y});
 	}
@@ -131,7 +131,7 @@ vector<float> concatCurve(vector<vector<float>> p,unsigned int vector_size){
 	return concatedCurve;
 }
 
-vector<float> prepareCurve(vector<float> p, double delta,unsigned int vector_size,float t){
+vector<float> prepareCurve(vector<float> p, double delta,unsigned int vector_size,float *t){
 	vector<vector<float>> snappedCurve = TWO_DIM::snapCurve(p, delta,t);
 	return TWO_DIM::concatCurve(snappedCurve,vector_size);
 }
