@@ -23,7 +23,7 @@ namespace ONE_DIM
 
 void filter(vector<vector<vector<float>>> &curves)
 {
-	double e=0.5;
+	double e=0.1;
 	for(unsigned int i=0;i<curves.size();i++)
 	{
 		unsigned int y=1;
@@ -42,8 +42,8 @@ void filter(vector<vector<vector<float>>> &curves)
 vector<vector<float>> snapCurve(vector<vector<float>> p, double delta, float t){
 	vector<vector<float>> snappedCurve;
 	for(int i=0; i<p.size(); i++){
-		float snapped_x=floor((p[i][0]+t)/delta)*delta;
-		snappedCurve[i].push_back({snapped_x});
+		float snapped_y = ((p[i][0]+t)/delta)*delta;
+		snappedCurve.push_back({snapped_y});
 	}
 	return snappedCurve;
 }
@@ -161,6 +161,7 @@ float continuousFrechetDistance(vector<vector<float>> p, vector<vector<float>> q
 	// }
 
 	// return Frechet::Continuous::distance(Curve(Points((curve_size_t) p.size(),_p)),Curve(Points((curve_size_t) q.size(),_q))).value;
+	return 0;
 }
 
 float getDiscreteFrechetDistance(vector<vector<float>> p, vector<vector<float>> q)
