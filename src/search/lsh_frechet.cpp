@@ -171,7 +171,7 @@ LSH_Frechet::LSH_Frechet(vector<vector<vector<float>>> input_curves,int k,int L,
 		for(int y=0;y<L;y++)
 		{
 			vector<float> hash_vector = LSH_Frechet::prepare_curve(input_curves[i],delta,vectorSize,t_snap[y]);
-			hashtable_item_lsh p{hash_vector,input_curves[i],ID(hash_vector,y),i};
+			hashtable_item_lsh p{input_curves[i],ID(hash_vector,y),i};
 			hashtables[y].insert(p.ID,p);
 		}
 	}

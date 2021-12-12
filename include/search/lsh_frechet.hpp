@@ -25,7 +25,6 @@ class LSH_Frechet
 private:
 	struct hashtable_item_lsh
 	{
-		vector<float> hash_curve;
         vector<vector<float>> p;
 		unsigned long long int ID;
 		int index;

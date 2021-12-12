@@ -69,7 +69,7 @@ bool cluster_ANN_Frechet::terminationCriterion(float search_radius, int* updated
 }
 
 //Cluster LSH
-cluster_lsh_Frechet::cluster_lsh_Frechet(vector<vector<float>> vectors,int K,int k,int L) : cluster_ANN(K,vectors), LSH(vectors,k,L,L2,0.125)
+cluster_lsh_Frechet::cluster_lsh_Frechet(vector<vector<float>> vectors,int K,int k,int L) : cluster_ANN_Frechet(K,vectors), LSH_Frechet(vectors,k,L,L2,0.125)
 {
     LSH::clusterMode = true;
     //First assignment
