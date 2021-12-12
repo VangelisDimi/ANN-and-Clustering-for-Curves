@@ -138,121 +138,142 @@ int main(int argc, char *argv[]){
 			mkdir("./output", 0700);
 		}
 		ofstream outfile ("./output/" + output_file, ios::out | ios::trunc);
+
 		double maf=0;
-
-		vector<vector<float>> vectors;
-		vector<string> ids;
-		read_file(input_file,vectors,ids);
-
-		vector<vector<float>> vectors_query;
-		vector<string> ids_query;
-		read_file(query_file,vectors_query,ids_query);
-		unsigned int n_query=ids_query.size();
-
 		double time_approximate=0;
 		double time_true=0;
 		vector<pair<float,unsigned int>> approximate_Nearest;
 		vector<pair<float,unsigned int>> true_Nearest;
-		if(algorithm=="LSH")
+		unsigned int n_query;
+
+		if(algorithm=="Frechet")
 		{
-			LSH lsh(vectors,k_lsh,L_lsh,L2);
-			for (unsigned int i=0 ; i<n_query ; i++)
+			int dim;
+			if(metric=="discrete") dim=2;
+			else if(metric=="continuous") dim=1;
+
+			vector<vector<vector<float>>> curves;
+			vector<string> ids;
+			read_file_curve(input_file,curves,ids,dim);
+
+			vector<vector<vector<float>>> curves_query;
+			vector<string> ids_query;
+			read_file_curve(query_file,curves_query,ids_query,dim);
+			n_query=ids_query.size();
+			
+			if (metric=="discrete")
 			{
-				auto start_lsh = chrono::high_resolution_clock::now();
-				approximate_Nearest=lsh.find_N_nearest(vectors_query[i],1);
-				auto stop_lsh = chrono::high_resolution_clock::now();
-				auto elapsed_lsh = stop_lsh - start_lsh ;
-				time_approximate += chrono::duration<double>(elapsed_lsh).count();
-
-				auto start_true = chrono::high_resolution_clock::now();
-				true_Nearest=exhaustive_search(vectors_query[i],vectors,1,&eucledian_distance);
-				auto stop_true = chrono::high_resolution_clock::now();
-				auto elapsed_true = stop_true - start_true ;
-				time_true += chrono::duration<double>(elapsed_true).count();
-
-				if(!approximate_Nearest.empty() && !true_Nearest.empty() && true_Nearest[0].first!=0)
+				LSH_Frechet lsh_fd(curves,k_lsh,L_lsh,DFD,delta);
+				for (unsigned int i=0 ; i<n_query ; i++)
 				{
-					double af=approximate_Nearest[0].first/true_Nearest[0].first;
-					if(af>maf) maf=af;
+					auto start_lsh = chrono::high_resolution_clock::now();
+					approximate_Nearest=lsh_fd.find_N_nearest(curves_query[i],1);
+					auto stop_lsh = chrono::high_resolution_clock::now();
+					auto elapsed_lsh = stop_lsh - start_lsh ;
+					time_approximate += chrono::duration<double>(elapsed_lsh).count();
+
+					auto start_true = chrono::high_resolution_clock::now();
+					true_Nearest=exhaustive_search(curves_query[i],curves,1,&getDiscreteFrechetDistance);
+					auto stop_true = chrono::high_resolution_clock::now();
+					auto elapsed_true = stop_true - start_true ;
+					time_true += chrono::duration<double>(elapsed_true).count();
+
+
+					if(!approximate_Nearest.empty() && !true_Nearest.empty() && true_Nearest[0].first!=0)
+					{
+						double af=approximate_Nearest[0].first/true_Nearest[0].first;
+						if(af>maf) maf=af;
+					}
+					write_file(outfile,ids_query[i],ids,approximate_Nearest,true_Nearest,"LSH_Frechet_Discrete");
 				}
-				write_file(outfile,ids_query[i],ids,approximate_Nearest,true_Nearest,"LSH_Vector");
+			}
+			else if(metric=="continuous")
+			{
+				LSH_Frechet lsh_fc(curves,k_lsh,L_lsh,CFD,delta);
+				ONE_DIM::filter(curves_query);
+				for (unsigned int i=0 ; i<n_query ; i++)
+				{
+					auto start_lsh = chrono::high_resolution_clock::now();
+					approximate_Nearest=lsh_fc.find_N_nearest(curves_query[i],1);
+					auto stop_lsh = chrono::high_resolution_clock::now();
+					auto elapsed_lsh = stop_lsh - start_lsh ;
+					time_approximate += chrono::duration<double>(elapsed_lsh).count();
+
+					auto start_true = chrono::high_resolution_clock::now();
+					true_Nearest=exhaustive_search(curves_query[i],curves,1,&continuousFrechetDistance);
+					auto stop_true = chrono::high_resolution_clock::now();
+					auto elapsed_true = stop_true - start_true ;
+					time_true += chrono::duration<double>(elapsed_true).count();
+
+					if(!approximate_Nearest.empty() && !true_Nearest.empty() && true_Nearest[0].first!=0)
+					{
+						double af=approximate_Nearest[0].first/true_Nearest[0].first;
+						if(af>maf) maf=af;
+					}
+					write_file(outfile,ids_query[i],ids,approximate_Nearest,true_Nearest,"LSH_Frechet_Continuous");
+				}
 			}
 		}
-		else if(algorithm=="Hypercube")
+		else
 		{
-			Cube cube(vectors,k_cube,M_cube,probes_cube,L2);
-			for (unsigned int i=0 ; i<n_query ; i++)
+			vector<vector<float>> vectors;
+			vector<string> ids;
+			read_file_vector(input_file,vectors,ids);
+
+			vector<vector<float>> vectors_query;
+			vector<string> ids_query;
+			read_file_vector(query_file,vectors_query,ids_query);
+			n_query=ids_query.size();
+
+			if(algorithm=="LSH")
 			{
-				auto start_cube = chrono::high_resolution_clock::now();
-				approximate_Nearest=cube.find_N_nearest(vectors_query[i],1);
-				auto stop_cube = chrono::high_resolution_clock::now();
-				auto elapsed_cube = stop_cube - start_cube ;
-				time_approximate += chrono::duration<double>(elapsed_cube).count();
-
-				auto start_true = chrono::high_resolution_clock::now();
-				true_Nearest=exhaustive_search(vectors_query[i],vectors,1,&eucledian_distance);
-				auto stop_true = chrono::high_resolution_clock::now();
-				auto elapsed_true = stop_true - start_true;
-				time_true += chrono::duration<double>(elapsed_true).count();
-
-				if(!approximate_Nearest.empty() && !true_Nearest.empty() && true_Nearest[0].first!=0)
+				LSH lsh(vectors,k_lsh,L_lsh,L2);
+				for (unsigned int i=0 ; i<n_query ; i++)
 				{
-					double af=approximate_Nearest[0].first/true_Nearest[0].first;
-					if(af>maf) maf=af;
+					auto start_lsh = chrono::high_resolution_clock::now();
+					approximate_Nearest=lsh.find_N_nearest(vectors_query[i],1);
+					auto stop_lsh = chrono::high_resolution_clock::now();
+					auto elapsed_lsh = stop_lsh - start_lsh ;
+					time_approximate += chrono::duration<double>(elapsed_lsh).count();
+
+					auto start_true = chrono::high_resolution_clock::now();
+					true_Nearest=exhaustive_search(vectors_query[i],vectors,1,&eucledian_distance);
+					auto stop_true = chrono::high_resolution_clock::now();
+					auto elapsed_true = stop_true - start_true ;
+					time_true += chrono::duration<double>(elapsed_true).count();
+
+					if(!approximate_Nearest.empty() && !true_Nearest.empty() && true_Nearest[0].first!=0)
+					{
+						double af=approximate_Nearest[0].first/true_Nearest[0].first;
+						if(af>maf) maf=af;
+					}
+					write_file(outfile,ids_query[i],ids,approximate_Nearest,true_Nearest,"LSH_Vector");
 				}
-				write_file(outfile,ids_query[i],ids,approximate_Nearest,true_Nearest,"LSH_Vector");
 			}
-		}
-		else if(algorithm=="Frechet" && metric=="discrete")
-		{
-			LSH_Frechet lsh_fd(vectors,k_lsh,L_lsh,DFD,delta);
-			for (unsigned int i=0 ; i<n_query ; i++)
+			else if(algorithm=="Hypercube")
 			{
-				auto start_lsh = chrono::high_resolution_clock::now();
-				approximate_Nearest=lsh_fd.find_N_nearest(vectors_query[i],1);
-				auto stop_lsh = chrono::high_resolution_clock::now();
-				auto elapsed_lsh = stop_lsh - start_lsh ;
-				time_approximate += chrono::duration<double>(elapsed_lsh).count();
-
-				auto start_true = chrono::high_resolution_clock::now();
-				true_Nearest=exhaustive_search(vectors_query[i],vectors,1,&getDiscreteFrechetDistance);
-				auto stop_true = chrono::high_resolution_clock::now();
-				auto elapsed_true = stop_true - start_true ;
-				time_true += chrono::duration<double>(elapsed_true).count();
-
-
-				if(!approximate_Nearest.empty() && !true_Nearest.empty() && true_Nearest[0].first!=0)
+				Cube cube(vectors,k_cube,M_cube,probes_cube,L2);
+				for (unsigned int i=0 ; i<n_query ; i++)
 				{
-					double af=approximate_Nearest[0].first/true_Nearest[0].first;
-					if(af>maf) maf=af;
-				}
-				write_file(outfile,ids_query[i],ids,approximate_Nearest,true_Nearest,"LSH_Vector");
-			}
-		}
-		else if(algorithm=="Frechet" && metric=="continuous")
-		{
-			LSH lsh_fc(vectors,k_lsh,L_lsh,CFD);
-			ONE_DIM::filter(vectors_query);
-			for (unsigned int i=0 ; i<n_query ; i++)
-			{
-				auto start_lsh = chrono::high_resolution_clock::now();
-				approximate_Nearest=lsh_fc.find_N_nearest(vectors_query[i],1);
-				auto stop_lsh = chrono::high_resolution_clock::now();
-				auto elapsed_lsh = stop_lsh - start_lsh ;
-				time_approximate += chrono::duration<double>(elapsed_lsh).count();
+					auto start_cube = chrono::high_resolution_clock::now();
+					approximate_Nearest=cube.find_N_nearest(vectors_query[i],1);
+					auto stop_cube = chrono::high_resolution_clock::now();
+					auto elapsed_cube = stop_cube - start_cube ;
+					time_approximate += chrono::duration<double>(elapsed_cube).count();
 
-				auto start_true = chrono::high_resolution_clock::now();
-				true_Nearest=exhaustive_search(vectors_query[i],vectors,1,&continuousFrechetDistance);
-				auto stop_true = chrono::high_resolution_clock::now();
-				auto elapsed_true = stop_true - start_true ;
-				time_true += chrono::duration<double>(elapsed_true).count();
+					auto start_true = chrono::high_resolution_clock::now();
+					true_Nearest=exhaustive_search(vectors_query[i],vectors,1,&eucledian_distance);
+					auto stop_true = chrono::high_resolution_clock::now();
+					auto elapsed_true = stop_true - start_true;
+					time_true += chrono::duration<double>(elapsed_true).count();
 
-				if(!approximate_Nearest.empty() && !true_Nearest.empty() && true_Nearest[0].first!=0)
-				{
-					double af=approximate_Nearest[0].first/true_Nearest[0].first;
-					if(af>maf) maf=af;
+					if(!approximate_Nearest.empty() && !true_Nearest.empty() && true_Nearest[0].first!=0)
+					{
+						double af=approximate_Nearest[0].first/true_Nearest[0].first;
+						if(af>maf) maf=af;
+					}
+					write_file(outfile,ids_query[i],ids,approximate_Nearest,true_Nearest,"Hypercube");
 				}
-				write_file(outfile,ids_query[i],ids,approximate_Nearest,true_Nearest,"LSH_Vector");
 			}
 		}
 

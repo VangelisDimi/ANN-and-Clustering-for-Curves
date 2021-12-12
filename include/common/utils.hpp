@@ -9,21 +9,20 @@ using namespace std;
 #include "exhaustive_search.hpp"
 
 namespace ONE_DIM{
-    void filter(vector<vector<float>> &vectors);
-    vector<float> snapCurve(vector<float> p, double delta,float t);
-    vector<float> concatCurve(vector<float> p,unsigned int vector_size);
-    vector<float> prepareCurve(vector<float> p, double delta,unsigned int vector_size,float *t);
+    void filter(vector<vector<vector<float>>> &curves);
+    vector<vector<float>> snapCurve(vector<vector<float>> p, double delta,float t);
+    vector<float> concatCurve(vector<vector<float>> p,unsigned int vector_size);
+    vector<float> prepareCurve(vector<vector<float>> p, double delta,unsigned int vector_size,float *t);
 }
 namespace TWO_DIM{
-    vector<vector<float>> snapCurve(vector<float> p, double delta,float *t);
+    vector<vector<float>> snapCurve(vector<vector<float>> p, double delta,float *t);
     vector<float> concatCurve(vector<vector<float>> p,unsigned int vector_size);
-    vector<float> prepareCurve(vector<float> p, double delta,unsigned int vector_size,float *t);
+    vector<float> prepareCurve(vector<vector<float>> p, double delta,unsigned int vector_size,float *t);
 }
 
-float continuousFrechetDistance(vector<float> p1, vector<float> p2);
-float getDiscreteFrechetDistance(vector<float> p, vector<float> q);
+float continuousFrechetDistance(vector<vector<float>> p, vector<vector<float>> q);
+float getDiscreteFrechetDistance(vector<vector<float>> p, vector<vector<float>> q);
 float eucledian_distance(vector<float>,vector<float>);
-void read_file(string filename,vector<vector<float>> &vectors,vector<string> &ids);
 float normal_distribution_rng();
 int uniform_distribution_rng(int lowerRange,int higherRange);
 float uniform_distribution_rng_float(float lowerRange,float higherRange);
@@ -37,6 +36,7 @@ int getValue(map<int,int> m, int key);
 int notExists(map<int,int> m, int key);
 vector<int> getNearbyProbes(int key, int n, int size);
 string fixedDecimalToBinary(int decimal, int size);
-void write_file(ofstream &outfile,string query_id,vector<string> ids,vector<pair<float,unsigned int>> N_Nearest,vector<pair<float,unsigned int>> R_Nearest,vector<pair<float,unsigned int>> True_N_Nearest,double time,double time_true,string algorithm);
+void read_file_vector(string filename,vector<vector<float>> &vectors,vector<string> &ids);
+void read_file_curve(string filename,vector<vector<vector<float>>> &curves,vector<string> &ids,unsigned int dimensions);
 
 #endif

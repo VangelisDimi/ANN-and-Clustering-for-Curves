@@ -35,7 +35,7 @@ void LSH_Frechet::unmarkAssignedPoints()
 			}
 }
 
-vector<pair<float,unsigned int>> LSH_Frechet::find_N_nearest(vector<float> p,unsigned int N)
+vector<pair<float,unsigned int>> LSH_Frechet::find_N_nearest(vector<vector<float>> p,unsigned int N)
 {
 	//Returns indexes of N Nearest elements
 	multimap<float, int> distances;
@@ -65,7 +65,7 @@ vector<pair<float,unsigned int>> LSH_Frechet::find_N_nearest(vector<float> p,uns
 	return N_Nearest;
 }
 
-vector<pair<float,unsigned int>> LSH_Frechet::find_R_nearest(vector<float> p,float R)
+vector<pair<float,unsigned int>> LSH_Frechet::find_R_nearest(vector<vector<float>> p,float R)
 {
 	//Returns indexes of R nearest element
 	multimap<float, int> distances;
@@ -104,15 +104,15 @@ vector<pair<float,unsigned int>> LSH_Frechet::find_R_nearest(vector<float> p,flo
 	return R_Nearest;
 }
 
-LSH_Frechet::LSH_Frechet(vector<vector<float>> input_vectors,int k,int L,int metric,double delta,float hashtable_size_ratio)//Constructor
+LSH_Frechet::LSH_Frechet(vector<vector<vector<float>>> input_curves,int k,int L,int metric,double delta,float hashtable_size_ratio)//Constructor
 {
 	//Initialize values
 	LSH_Frechet::L=L;
 	LSH_Frechet::k=k;
 	LSH_Frechet::delta=delta;
 	w=150;
-	vectorSize=(!input_vectors.empty()) ? input_vectors[0].size() : 0;
-	n=input_vectors.size();
+	vectorSize=(!input_curves.empty()) ? input_curves[0].size() : 0;
+	n=input_curves.size();
 	tableSize=ceil(n*hashtable_size_ratio);
 	hashtables = new hash_table<hashtable_item_lsh>[L];
 	for (int i = 0; i < L; i++)
@@ -155,7 +155,7 @@ LSH_Frechet::LSH_Frechet(vector<vector<float>> input_vectors,int k,int L,int met
 	}
 	else if(metric==CFD)
 	{
-		ONE_DIM::filter(input_vectors);
+		ONE_DIM::filter(input_curves);
 		distance=&continuousFrechetDistance;
 		prepare_curve=&ONE_DIM::prepareCurve;
 		for(int i=0;i<L;i++)
@@ -170,8 +170,8 @@ LSH_Frechet::LSH_Frechet(vector<vector<float>> input_vectors,int k,int L,int met
 	{
 		for(int y=0;y<L;y++)
 		{
-			vector<float> hash_vector = LSH_Frechet::prepare_curve(input_vectors[i],delta,vectorSize,t_snap[y]);
-			hashtable_item_lsh p{hash_vector,input_vectors[i],ID(hash_vector,y),i};
+			vector<float> hash_vector = LSH_Frechet::prepare_curve(input_curves[i],delta,vectorSize,t_snap[y]);
+			hashtable_item_lsh p{hash_vector,input_curves[i],ID(hash_vector,y),i};
 			hashtables[y].insert(p.ID,p);
 		}
 	}

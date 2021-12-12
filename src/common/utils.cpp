@@ -21,17 +21,17 @@ using namespace std;
 namespace ONE_DIM
 {
 
-void filter(vector<vector<float>> &vectors)
+void filter(vector<vector<vector<float>>> &curves)
 {
 	double e=0.5;
-	for(unsigned int i=0;i<vectors.size();i++)
+	for(unsigned int i=0;i<curves.size();i++)
 	{
 		unsigned int y=1;
-		while(y<vectors[i].size()-1)
+		while(y<curves[i].size()-1)
 		{
-			if(abs(vectors[i][y+1]-vectors[i][y])<e && abs(vectors[i][y]-vectors[i][y-1])<e)
+			if(abs(curves[i][y+1][0]-curves[i][y][0])<e && abs(curves[i][y][0]-curves[i][y-1][0])<e)
 			{
-				vectors[i].erase(vectors[i].begin() + y);
+				curves[i].erase(curves[i].begin() + y);
 				continue;
 			}
 			y++;
@@ -39,15 +39,16 @@ void filter(vector<vector<float>> &vectors)
 	}
 }
 
-vector<float> snapCurve(vector<float> p, double delta, float t){
-	vector<float> snappedCurve;
+vector<vector<float>> snapCurve(vector<vector<float>> p, double delta, float t){
+	vector<vector<float>> snappedCurve;
 	for(int i=0; i<p.size(); i++){
-		snappedCurve.push_back(floor((p[i]+t)/delta)*delta);
+		float snapped_x=floor((p[i][0]+t)/delta)*delta;
+		snappedCurve[i].push_back({snapped_x});
 	}
 	return snappedCurve;
 }
 
-vector<float> concatCurve(vector<float> p,unsigned int vector_size){
+vector<float> concatCurve(vector<vector<float>> p,unsigned int vector_size){
 	int curveLength = vector_size;
 
 	int prev;
@@ -58,7 +59,7 @@ vector<float> concatCurve(vector<float> p,unsigned int vector_size){
 		prev=i-1;
 		next=i+1;
 
-		if(p[i]>=min(p[prev],p[next]) && p[i]<=max(p[prev],p[next]))
+		if(p[i][0]>=min(p[prev][0],p[next][0]) && p[i][0]<=max(p[prev][0],p[next][0]))
 		{			
 			p.erase(p.begin() + i);
 			continue;
@@ -66,14 +67,20 @@ vector<float> concatCurve(vector<float> p,unsigned int vector_size){
 		i++;
 	}
 
-	if( curveLength > p.size() )
-		for(int i=0; i>curveLength-p.size(); i++)
-			p.push_back(std::numeric_limits<float>::max()-5);
-	return p;
+	vector<float> concatedCurve;
+	for(int i=0;i<p.size();i++)
+	{
+		concatedCurve.push_back(p[i][0]);
+	}
+
+	if( curveLength > concatedCurve.size() )
+		for(int i=0; i>curveLength-concatedCurve.size(); i++)
+			concatedCurve.push_back(std::numeric_limits<float>::max()-5);
+	return concatedCurve;
 }
 
-vector<float> prepareCurve(vector<float> p, double delta,unsigned int vector_size,float *t){
-	vector<float> snappedCurve = ONE_DIM::snapCurve(p, delta,t[0]);
+vector<float> prepareCurve(vector<vector<float>> p, double delta,unsigned int vector_size,float *t){
+	vector<vector<float>> snappedCurve = ONE_DIM::snapCurve(p, delta,t[0]);
 	return ONE_DIM::concatCurve(snappedCurve,vector_size);
 }
 
@@ -82,14 +89,15 @@ vector<float> prepareCurve(vector<float> p, double delta,unsigned int vector_siz
 namespace TWO_DIM
 {
 
-vector<vector<float>> snapCurve(vector<float> p, double delta,float *t){
-	float _x = 0.0;
-	float _y = 0.0;
-	float x = 0.0;
-	float y = 0.0;
+vector<vector<float>> snapCurve(vector<vector<float>> p, double delta,float *t){
+	float _x;
+	float _y;
+	float x;
+	float y;
 	vector<vector<float>> snappedCurve;
 	for(int i=0; i<p.size(); i++){
-		_y = p[i];
+		_x = p[i][0];
+		_y = p[i][1];
 		x  = floor((_x-t[0])/delta+(1/2))*delta + t[0];
 		y  = floor((_y-t[1])/delta+(1/2))*delta + t[1];
 		_x += 1;
@@ -131,7 +139,7 @@ vector<float> concatCurve(vector<vector<float>> p,unsigned int vector_size){
 	return concatedCurve;
 }
 
-vector<float> prepareCurve(vector<float> p, double delta,unsigned int vector_size,float *t){
+vector<float> prepareCurve(vector<vector<float>> p, double delta,unsigned int vector_size,float *t){
 	vector<vector<float>> snappedCurve = TWO_DIM::snapCurve(p, delta,t);
 	return TWO_DIM::concatCurve(snappedCurve,vector_size);
 }
@@ -139,7 +147,7 @@ vector<float> prepareCurve(vector<float> p, double delta,unsigned int vector_siz
 }
 
 
-float continuousFrechetDistance(vector<float> p, vector<float> q)
+float continuousFrechetDistance(vector<vector<float>> p, vector<vector<float>> q)
 {
 	// Point _p[p.size()]; 
 	// Point _q[q.size()];
@@ -155,21 +163,21 @@ float continuousFrechetDistance(vector<float> p, vector<float> q)
 	// return Frechet::Continuous::distance(Curve(Points((curve_size_t) p.size(),_p)),Curve(Points((curve_size_t) q.size(),_q))).value;
 }
 
-float getDiscreteFrechetDistance(vector<float> p, vector<float> q)
+float getDiscreteFrechetDistance(vector<vector<float>> p, vector<vector<float>> q)
 {
 	float c[p.size()][q.size()];
 	for(int i=0;i<p.size();i++)
 	{
-		for(int j=0;j<p.size();j++)
+		for(int j=0;j<q.size();j++)
 		{
 			if(i==0 && j == 0)
-				c[0][0] = eucledian_distance({0,p[0]},{0,q[0]});
+				c[0][0] = eucledian_distance(p[0],q[0]);
 			else if(i==0 && j>0)
-				c[i][j] = max(c[0][j-1],eucledian_distance({0,p[0]},{(float) j,q[j]}));
+				c[i][j] = max(c[0][j-1],eucledian_distance(p[0],q[j]));
 			else if(i>0 && j==0)
-				c[i][j] = max(c[i-1][0],eucledian_distance({(float) i,p[i]},{0,q[0]}));
+				c[i][j] = max(c[i-1][0],eucledian_distance(p[i],q[0]));
 			else
-				c[i][j] = max(min({c[i-1][j],c[i-1][j-1],c[i][j-1]}),eucledian_distance({(float) i,p[i]},{(float) j,q[j]}));
+				c[i][j] = max(min({c[i-1][j],c[i-1][j-1],c[i][j-1]}),eucledian_distance(p[i],q[j]));
 		}
 	}
 	return c[p.size()-1][q.size()-1];
@@ -319,7 +327,7 @@ float uniform_distribution_rng_float(float lowerRange,float higherRange)
 	return distr(generator);
 }
 
-void read_file(string filename,vector<vector<float>> &vectors,vector<string> &ids)
+void read_file_vector(string filename,vector<vector<float>> &vectors,vector<string> &ids)
 {
 	ifstream  file(filename);
 	unsigned int filelines=count(istreambuf_iterator<char>(file), 
@@ -342,6 +350,40 @@ void read_file(string filename,vector<vector<float>> &vectors,vector<string> &id
 		while(lineStream >> value)
 		{
 			vectors[i].push_back(value);
+		}
+		i++;
+	}
+}
+
+void read_file_curve(string filename,vector<vector<vector<float>>> &curves,vector<string> &ids,unsigned int dimensions)
+{
+	ifstream  file(filename);
+	unsigned int filelines=count(istreambuf_iterator<char>(file), 
+    istreambuf_iterator<char>(), '\n');
+
+	curves=vector<vector<vector<float>>>(filelines);
+
+	file.clear();
+	file.seekg(0,ios::beg);
+	string  line;
+	int i=0;
+	while(getline(file, line))
+	{
+		stringstream  lineStream(line);
+
+		float value;
+		string id;
+		lineStream >> id;
+		ids.push_back(id);//Vector Id
+		int y=0;
+		while(lineStream >> value)
+		{
+			vector<float> point;
+			if(dimensions==2)
+				point.push_back(y);
+			point.push_back(value);
+			curves[i].push_back(point);
+			y++;
 		}
 		i++;
 	}

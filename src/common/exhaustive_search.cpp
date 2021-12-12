@@ -22,3 +22,23 @@ vector<pair<float,unsigned int>> exhaustive_search(vector<float> p,vector<vector
     }
     return nBest;
 }
+
+vector<pair<float,unsigned int>> exhaustive_search(vector<vector<float>> p,vector<vector<vector<float>>> curves,unsigned int N,float (* distance)(vector<vector<float>>,vector<vector<float>>))
+{    
+    //Find N nearest neighbors of vector p size n from vector of vectors
+    //Return indices
+    multimap<float,int> distances;
+    for(unsigned int i=0;i<curves.size();i++)
+    {
+        distances.insert({distance(p,curves[i]),i});
+    }
+    
+    vector<pair<float,unsigned int>> nBest;
+    unsigned int i=0;
+    auto it=distances.begin();
+    for(;it != distances.end() && i<N ;++it,i++)
+    {
+        nBest.push_back({it->first,it->second});
+    }
+    return nBest;
+}
