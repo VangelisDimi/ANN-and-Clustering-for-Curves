@@ -11,14 +11,17 @@
 #include <chrono>
 
 #include "cluster.hpp"
-//#include "cluster_ANN.hpp"
+#include "cluster_ANN.hpp"
 #include "utils.hpp"
 
 using namespace std;
 
+#define MEAN_V "Mean Vector"
+#define MEAN_F "Mean Frechet"
+
 void write_file(string output_file,
 				vector<cluster::centroid> centroids,pair<vector<float>,float> silhouettes,vector<string> ids,
-				double time_cluster,string algorithm,bool complete,bool silhouette,string update)
+				double time_cluster,string algorithm,bool complete,bool silhouette)
 {
 	struct stat info;
 	if (stat("./output",&info) == -1) {
@@ -34,22 +37,10 @@ void write_file(string output_file,
 		outfile<<", centroid: ";
 		
 		outfile<<"[";
-		int y=0;
 		for(auto it = centroids[i].coordinates.begin(); it != centroids[i].coordinates.end(); ++it)
 		{
-			if(update==MEAN_V)
-			{
-				outfile<<*it;
-				if(next(it,1)!=centroids[i].coordinates.end()) outfile<<",";
-			}
-			else if(update==MEAN_F)
-			{
-				outfile<<"("<<y<<",";
-				outfile<<*it;
-				outfile<<")";
-				if(next(it,1)!=centroids[i].coordinates.end()) outfile<<",";
-			}
-			y++;
+			outfile<<*it;
+			if(next(it,1)!=centroids[i].coordinates.end()) outfile<<",";
 		}
 		outfile<<"]}"<<endl;
 	}
@@ -75,22 +66,10 @@ void write_file(string output_file,
 			outfile<<"CLUSTER-"<<i+1;
 			outfile<<" { ";
 			outfile<<"[";
-			int y=0;
 			for(auto it = centroids[i].coordinates.begin(); it != centroids[i].coordinates.end(); ++it)
 			{
-				if(update==MEAN_V)
-				{
-					outfile<<*it;
-					if(next(it,1)!=centroids[i].coordinates.end()) outfile<<",";
-				}
-				else if(update==MEAN_F)
-				{
-					outfile<<"("<<y<<",";
-					outfile<<*it;
-					outfile<<")";
-					if(next(it,1)!=centroids[i].coordinates.end()) outfile<<",";
-				}
-				y++;
+				outfile<<*it;
+				if(next(it,1)!=centroids[i].coordinates.end()) outfile<<",";
 			}
 			outfile<<"]";
 
@@ -219,20 +198,47 @@ int main(int argc, char *argv[]){
 		cin>>K_cluster;
 	}
 
-	vector<vector<float>> vectors;
-	vector<string> ids;
-	read_file(input_file,vectors,ids);
-	if(assignment=="Classic" && (update==MEAN_V || update==MEAN_F))
+	if(update==MEAN_V)
 	{
-		pair<vector<float>,float> silhouettes;
-		auto start_cluster = chrono::high_resolution_clock::now();
-		cluster_lloyds cluster(K_cluster,vectors,update);
-		auto stop_cluster = chrono::high_resolution_clock::now();
-		auto elapsed_cluster = stop_cluster - start_cluster ;
-		double time_cluster = chrono::duration<double>(elapsed_cluster).count();
+		vector<vector<float>> vectors;
+		vector<string> ids;
+		read_file_vector(input_file,vectors,ids);
+		if(assignment=="Classic")
+		{
+			pair<vector<float>,float> silhouettes;
+			auto start_cluster = chrono::high_resolution_clock::now();
+			cluster_lloyds cluster(K_cluster,vectors);
+			auto stop_cluster = chrono::high_resolution_clock::now();
+			auto elapsed_cluster = stop_cluster - start_cluster ;
+			double time_cluster = chrono::duration<double>(elapsed_cluster).count();
 
-		if(silhouette) silhouettes=cluster.get_silhouettes_average();
-		write_file(output_file,cluster.get_clusters(),silhouettes,ids,time_cluster,"Lloyds with "+update,complete,silhouette,update);
+			if(silhouette) silhouettes=cluster.get_silhouettes_average();
+			write_file(output_file,cluster.get_clusters(),silhouettes,ids,time_cluster,"Lloyds with "+update,complete,silhouette);
+		}
+		else if(assignment=="LSH")
+		{
+			pair<vector<float>,float> silhouettes;
+			auto start_cluster = chrono::high_resolution_clock::now();
+			cluster_lsh cluster(vectors,K_cluster,k_lsh,L_lsh);
+			auto stop_cluster = chrono::high_resolution_clock::now();
+			auto elapsed_cluster = stop_cluster - start_cluster ;
+			double time_cluster = chrono::duration<double>(elapsed_cluster).count();
+
+			if(silhouette) silhouettes=cluster.get_silhouettes_average();
+			write_file(output_file,cluster.get_clusters(),silhouettes,ids,time_cluster," Range Search LSH with "+update,complete,silhouette);
+		}
+		else if(assignment=="Hypercube")
+		{
+			pair<vector<float>,float> silhouettes;
+			auto start_cluster = chrono::high_resolution_clock::now();
+			cluster_cube cluster(vectors,K_cluster,k_cube,probes_cube,M_cube);
+			auto stop_cluster = chrono::high_resolution_clock::now();
+			auto elapsed_cluster = stop_cluster - start_cluster ;
+			double time_cluster = chrono::duration<double>(elapsed_cluster).count();
+
+			if(silhouette) silhouettes=cluster.get_silhouettes_average();
+			write_file(output_file,cluster.get_clusters(),silhouettes,ids,time_cluster," Range Search LSH with "+update,complete,silhouette);
+		}
 	}
 
 	

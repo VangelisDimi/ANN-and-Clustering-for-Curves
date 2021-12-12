@@ -37,7 +37,8 @@ clean_cluster:
 	rm -f ./bin/cluster
 
 compile_cluster: mkdir
-	$(CC) ./src/cluster/main_cluster.cpp ./src/cluster/cluster.cpp $(COMMON)/utils.cpp -o ./bin/cluster -I./include/cluster -I./include/lsh -I./include/cube -I./include/search $(CFLAGS)
+	$(CC) ./src/cluster/main_cluster.cpp ./src/cluster/cluster.cpp ./src/cluster/cluster_ANN.cpp ./src/cube/cube.cpp ./src/lsh/lsh.cpp $(COMMON)/utils.cpp $(COMMON)/hash_functions.cpp\
+	 -o ./bin/cluster -I./include/cluster -I./include/lsh -I./include/cube -I./include/search $(CFLAGS)
 
 compile_debug_cluster:
 	

@@ -6,9 +6,6 @@ using namespace std;
 #include <vector>
 #include <list>
 
-#define MEAN_V "Mean Vector"
-#define MEAN_F "Mean Frechet"
-
 //Implementation of centroid-based clustering
 //K-Means++ Initialization
 //L2 Metric
@@ -48,23 +45,16 @@ protected:
     int vectorSize;
     int n;
     
-    cluster(int K,vector<vector<float>> vectors,string update);
+    cluster(int K,vector<vector<float>> vectors);
 
     void new_centroids();
     bool convergence(vector<centroid> centroids_old);
-
-
-    float (*distance)(vector<float>, vector<float>);//Distance function
-private:
-    string update;
-    void update_MV();
-    void update_MF();
 };
 
 class cluster_lloyds : public cluster
 {
 public:
-    cluster_lloyds(int K,vector<vector<float>> vectors,string update);
+    cluster_lloyds(int K,vector<vector<float>> vectors);
 };
 
 #endif
