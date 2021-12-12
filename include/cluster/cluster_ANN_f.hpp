@@ -1,13 +1,12 @@
 #pragma once
-#ifndef cluster_ANN_h
-#define cluster_ANN_h
-#include "cluster.hpp"
-#include "lsh.hpp"
-#include "cube.hpp"
+#ifndef cluster_ANN_f_h
+#define cluster_ANN_f_h
+#include "cluster_f.hpp"
+#include "lsh_frechet.hpp"
 
 //Implementation of clustering with reverse assignment
 
-class cluster_ANN : public cluster
+class cluster_ANN_Frechet : public cluster_Frechet
 {
 protected:
     void bruteforce_assignment(vector<tuple<int,int,float>> flagged_indexes);
@@ -19,18 +18,10 @@ protected:
     cluster_ANN(int K,vector<vector<float>> vectors);
 };
 
-class cluster_lsh : public cluster_ANN,public LSH //Using LSH reverse assignment (range search)
+class cluster_lsh_Frechet : public cluster_ANN_Frechet,public LSH_Frechet //Using LSH reverse assignment (range search)
 {
 public:
-    cluster_lsh(vector<vector<float>> vectors,int K,int k,int L);
-    void new_assignment();
-    void rangeSearch_Assignment(vector<tuple<int,int,float>> flagged_indexes, float search_radius);
-};
-
-class cluster_cube : public cluster_ANN,public Cube //Using Hypercube reverse assignment (range search)
-{
-public:
-    cluster_cube(vector<vector<float>> vectors,int K,int k,int probes,int M);
+    cluster_lsh_Frechet(vector<vector<float>> vectors,int K,int k,int L);
     void new_assignment();
     void rangeSearch_Assignment(vector<tuple<int,int,float>> flagged_indexes, float search_radius);
 };
