@@ -13,6 +13,7 @@
 #include "cluster.hpp"
 #include "cluster_ANN.hpp"
 #include "utils.hpp"
+#include "cluster_f.hpp"
 
 using namespace std;
 
@@ -21,68 +22,12 @@ using namespace std;
 
 void write_file(string output_file,
 				vector<cluster::centroid> centroids,pair<vector<float>,float> silhouettes,vector<string> ids,
-				double time_cluster,string algorithm,bool complete,bool silhouette)
-{
-	struct stat info;
-	if (stat("./output",&info) == -1) {
-		mkdir("./output", 0700);
-	}
-	ofstream outfile ("./output/" + output_file, ios::out | ios::trunc);
+				double time_cluster,string algorithm,bool complete,bool silhouette);
+void write_file(string output_file,
+				vector<cluster_Frechet::centroid> centroids,pair<vector<float>,float> silhouettes,vector<string> ids,
+				double time_cluster,string algorithm,bool complete,bool silhouette);
 
-	outfile << "Algorithm: " << algorithm << endl;
-	for (int i = 0; i < (int) centroids.size(); i++)
-	{
-		outfile<<"CLUSTER-"<<i+1;
-		outfile<<" {size: "<<centroids[i].vectors.size();
-		outfile<<", centroid: ";
-		
-		outfile<<"[";
-		for(auto it = centroids[i].coordinates.begin(); it != centroids[i].coordinates.end(); ++it)
-		{
-			outfile<<*it;
-			if(next(it,1)!=centroids[i].coordinates.end()) outfile<<",";
-		}
-		outfile<<"]}"<<endl;
-	}
 
-	outfile << "clustering_time: " << time_cluster << endl;
-
-	if(silhouette)
-	{
-		outfile<<endl;
-		outfile << "Silhouette: [";
-		for(auto it = silhouettes.first.begin(); it < silhouettes.first.end(); ++it)
-		{
-			outfile<<*it<<",";
-		}
-		outfile<<silhouettes.second<<"]"<<endl;
-	}
-
-	if(complete)
-	{
-		outfile<<endl;
-		for (int i = 0; i < (int) centroids.size(); i++)
-		{
-			outfile<<"CLUSTER-"<<i+1;
-			outfile<<" { ";
-			outfile<<"[";
-			for(auto it = centroids[i].coordinates.begin(); it != centroids[i].coordinates.end(); ++it)
-			{
-				outfile<<*it;
-				if(next(it,1)!=centroids[i].coordinates.end()) outfile<<",";
-			}
-			outfile<<"]";
-
-			for(auto it = centroids[i].vectors.begin(); it != centroids[i].vectors.end(); ++it)
-			{
-				outfile<<", "<<ids[it->index];
-			}
-			outfile<<"}"<<endl;
-		}
-	}
-
-	outfile.close();
-}
 
 int main(int argc, char *argv[]){
 	srand((time(0)));
@@ -240,7 +185,161 @@ int main(int argc, char *argv[]){
 			write_file(output_file,cluster.get_clusters(),silhouettes,ids,time_cluster," Range Search LSH with "+update,complete,silhouette);
 		}
 	}
+	else if(update==MEAN_F)
+	{
+		vector<vector<vector<float>>> curves;
+		vector<string> ids;
+		read_file_curve(input_file,curves,ids,2);
+		if(assignment=="Classic")
+		{
+			pair<vector<float>,float> silhouettes;
+			auto start_cluster = chrono::high_resolution_clock::now();
+			cluster_lloyds_Frechet cluster(K_cluster,curves);
+			auto stop_cluster = chrono::high_resolution_clock::now();
+			auto elapsed_cluster = stop_cluster - start_cluster ;
+			double time_cluster = chrono::duration<double>(elapsed_cluster).count();
+
+			if(silhouette) silhouettes=cluster.get_silhouettes_average();
+			write_file(output_file,cluster.get_clusters(),silhouettes,ids,time_cluster,"Lloyds with "+update,complete,silhouette);
+		}
+		else if(assignment=="LSH")
+		{
+			
+		}
+	}
 
 	
 	return 0;
+}
+
+void write_file(string output_file,
+				vector<cluster::centroid> centroids,pair<vector<float>,float> silhouettes,vector<string> ids,
+				double time_cluster,string algorithm,bool complete,bool silhouette)
+{
+	struct stat info;
+	if (stat("./output",&info) == -1) {
+		mkdir("./output", 0700);
+	}
+	ofstream outfile ("./output/" + output_file, ios::out | ios::trunc);
+
+	outfile << "Algorithm: " << algorithm << endl;
+	for (int i = 0; i < (int) centroids.size(); i++)
+	{
+		outfile<<"CLUSTER-"<<i+1;
+		outfile<<" {size: "<<centroids[i].vectors.size();
+		outfile<<", centroid: ";
+		
+		outfile<<"[";
+		for(auto it = centroids[i].coordinates.begin(); it != centroids[i].coordinates.end(); ++it)
+		{
+			outfile<<*it;
+			if(next(it,1)!=centroids[i].coordinates.end()) outfile<<",";
+		}
+		outfile<<"]}"<<endl;
+	}
+
+	outfile << "clustering_time: " << time_cluster << endl;
+
+	if(silhouette)
+	{
+		outfile<<endl;
+		outfile << "Silhouette: [";
+		for(auto it = silhouettes.first.begin(); it < silhouettes.first.end(); ++it)
+		{
+			outfile<<*it<<",";
+		}
+		outfile<<silhouettes.second<<"]"<<endl;
+	}
+
+	if(complete)
+	{
+		outfile<<endl;
+		for (int i = 0; i < (int) centroids.size(); i++)
+		{
+			outfile<<"CLUSTER-"<<i+1;
+			outfile<<" { ";
+			outfile<<"[";
+			for(auto it = centroids[i].coordinates.begin(); it != centroids[i].coordinates.end(); ++it)
+			{
+				outfile<<*it;
+				if(next(it,1)!=centroids[i].coordinates.end()) outfile<<",";
+			}
+			outfile<<"]";
+
+			for(auto it = centroids[i].vectors.begin(); it != centroids[i].vectors.end(); ++it)
+			{
+				outfile<<", "<<ids[it->index];
+			}
+			outfile<<"}"<<endl;
+		}
+	}
+
+	outfile.close();
+}
+
+void write_file(string output_file,
+				vector<cluster_Frechet::centroid> centroids,pair<vector<float>,float> silhouettes,vector<string> ids,
+				double time_cluster,string algorithm,bool complete,bool silhouette)
+{
+	struct stat info;
+	if (stat("./output",&info) == -1) {
+		mkdir("./output", 0700);
+	}
+	ofstream outfile ("./output/" + output_file, ios::out | ios::trunc);
+
+	outfile << "Algorithm: " << algorithm << endl;
+	for (int i = 0; i < (int) centroids.size(); i++)
+	{
+		outfile<<"CLUSTER-"<<i+1;
+		outfile<<" {size: "<<centroids[i].curves.size();
+		outfile<<", centroid: ";
+		
+		outfile<<"[";
+		for(auto it = centroids[i].coordinates.begin(); it != centroids[i].coordinates.end(); ++it)
+		{
+			auto it2= (*it).begin();
+			outfile<<"("<<*it2<<","<<*next(it2,1)<<")";
+			if(next(it,1)!=centroids[i].coordinates.end()) outfile<<",";
+		}
+		outfile<<"]}"<<endl;
+	}
+
+	outfile << "clustering_time: " << time_cluster << endl;
+
+	if(silhouette)
+	{
+		outfile<<endl;
+		outfile << "Silhouette: [";
+		for(auto it = silhouettes.first.begin(); it < silhouettes.first.end(); ++it)
+		{
+			outfile<<*it<<",";
+		}
+		outfile<<silhouettes.second<<"]"<<endl;
+	}
+
+	if(complete)
+	{
+		outfile<<endl;
+		for (int i = 0; i < (int) centroids.size(); i++)
+		{
+			outfile<<"CLUSTER-"<<i+1;
+			outfile<<" { ";
+			outfile<<"[";
+			for(auto it = centroids[i].coordinates.begin(); it != centroids[i].coordinates.end(); ++it)
+			{
+				auto it2= (*it).begin();
+				outfile<<"("<<*it2<<","<<*next(it2,1)<<")";
+				if(next(it,1)!=centroids[i].coordinates.end()) outfile<<",";
+			}
+			outfile<<"]";
+
+			for(auto it = centroids[i].curves.begin(); it != centroids[i].curves.end(); ++it)
+			{
+				outfile<<", "<<ids[it->index];
+			}
+			outfile<<"}"<<endl;
+		}
+	}
+
+	outfile.close();
 }

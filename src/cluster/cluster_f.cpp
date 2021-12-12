@@ -5,15 +5,16 @@
 #include <limits>
 #include <algorithm>
 #include <iterator>
-#include "cluster.hpp"
+#include "cluster_f.hpp"
 #include "utils.hpp"
+#include<iostream>
 
 //Cluster parent class
-cluster::cluster(int K,vector<vector<float>> vectors)
+cluster_Frechet::cluster_Frechet(int K,vector<vector<vector<float>>> curves)
 {
-    cluster::K=K;
-    cluster::vectorSize=(!vectors.empty()) ? vectors[0].size() : 0;
-    cluster::n=vectors.size();
+    cluster_Frechet::K=K;
+    cluster_Frechet::vectorSize=(!curves.empty()) ? curves[0].size() : 0;
+    cluster_Frechet::n=curves.size();
 
     //K-Means++ initialization
     vector<int> non_centroids(n);
@@ -24,7 +25,7 @@ cluster::cluster(int K,vector<vector<float>> vectors)
 
     centroid c1;
     int index=uniform_distribution_rng(0,n-1);
-    c1.coordinates=vectors[index];
+    c1.coordinates=curves[index];
     D[index]=0;
     non_centroids.erase(remove(non_centroids.begin(), non_centroids.end(), index), non_centroids.end());
     centroids.push_back(c1);
@@ -33,7 +34,7 @@ cluster::cluster(int K,vector<vector<float>> vectors)
         centroid c;
         for (int i : non_centroids)
         {
-            float distance=eucledian_distance(vectors[i],centroids.back().coordinates);
+            float distance=getDiscreteFrechetDistance(curves[i],centroids.back().coordinates);
             if(distance<D[i]) 
             {
                 D[i]=distance;
@@ -62,7 +63,7 @@ cluster::cluster(int K,vector<vector<float>> vectors)
             if(x>it->first && x<=it_next->first)
             {
                 centroid c;
-                c.coordinates=vectors[it_next->second];
+                c.coordinates=curves[it_next->second];
                 D[it_next->second]=0;
                 non_centroids.erase(remove(non_centroids.begin(), non_centroids.end(), it_next->second), non_centroids.end());
                 centroids.push_back(c);
@@ -72,40 +73,17 @@ cluster::cluster(int K,vector<vector<float>> vectors)
     }
 }
 
-void cluster::new_centroids()
+void cluster_Frechet::new_centroids()
 {
-    //Create new centroids by calculating mean vector
-    vector<vector<float>> new_centroids;
-    for (auto it = centroids.begin(); it != centroids.end(); ++it)
-    {
-        vector<float> new_centroid(vectorSize);
-        iota(new_centroid.begin(), new_centroid.end(), 0);
-        for(auto it2 = it->vectors.begin() ; it2 != it->vectors.end(); ++it2)
-        {
-            for (int i = 0; i < vectorSize; i++)
-            {
-                new_centroid[i]+=it2->p[i];
-            }
-        }
-        for (int y = 0; y < vectorSize; y++)
-        {
-            new_centroid[y] /= it->vectors.size();
-        }
-        new_centroids.push_back(new_centroid);
-    }
-    for (int i=0;i<K;i++)
-    {
-        centroids[i].coordinates=new_centroids[i];
-        centroids[i].vectors.clear();
-    }
+    //Create new centroids by calculating mean curve
 };
 
-vector<cluster::centroid> cluster::get_clusters()
+vector<cluster_Frechet::centroid> cluster_Frechet::get_clusters()
 {
     return centroids;
 }
 
-pair<vector<float>,float> cluster::get_silhouettes_average()
+pair<vector<float>,float> cluster_Frechet::get_silhouettes_average()
 {
     //Return average silhouettes for every cluster
     //Plus average for whole dataset
@@ -116,16 +94,16 @@ pair<vector<float>,float> cluster::get_silhouettes_average()
     for (int i = 0; i < K; i++)
     {
         float averages_si=0;
-        for (int v = 0; v < centroids[i].vectors.size(); v++)
+        for (int v = 0; v < centroids[i].curves.size(); v++)
         {
             float a_vector;
             float b_vector;
-            for (int a = 0; a < centroids[i].vectors.size(); a++)
+            for (int a = 0; a < centroids[i].curves.size(); a++)
             {
                 if(a==v) continue;
-                a_vector+=eucledian_distance(centroids[i].vectors[v].p,centroids[i].vectors[a].p);
+                a_vector+=getDiscreteFrechetDistance(centroids[i].curves[v].p,centroids[i].curves[a].p);
             }
-            a_vector/=centroids[i].vectors.size()-1;
+            a_vector/=centroids[i].curves.size()-1;
 
             float minimum=numeric_limits<float>::max();
             int minimum_index;
@@ -133,25 +111,25 @@ pair<vector<float>,float> cluster::get_silhouettes_average()
             {
                 if (c==i) continue;
                 
-                float distance=eucledian_distance(centroids[i].vectors[v].p,centroids[c].coordinates);
+                float distance=getDiscreteFrechetDistance(centroids[i].curves[v].p,centroids[c].coordinates);
                 if(distance<minimum)
                 {
                     minimum=distance;
                     minimum_index=c;
                 }
             }
-            for (int b = 0; b < centroids[minimum_index].vectors.size(); b++)
+            for (int b = 0; b < centroids[minimum_index].curves.size(); b++)
             {
-                b_vector+=eucledian_distance(centroids[i].vectors[v].p,centroids[minimum_index].vectors[b].p);
+                b_vector+=getDiscreteFrechetDistance(centroids[i].curves[v].p,centroids[minimum_index].curves[b].p);
             }
-            b_vector/=centroids[minimum_index].vectors.size();
+            b_vector/=centroids[minimum_index].curves.size();
 
             float si=(b_vector-a_vector)/max(a_vector,b_vector);
             averages_si+=si;
             total_average+=si;
             total_number++;
         }
-        averages_si/=centroids[i].vectors.size();
+        averages_si/=centroids[i].curves.size();
         averages.push_back(averages_si);
     }
 
@@ -159,41 +137,41 @@ pair<vector<float>,float> cluster::get_silhouettes_average()
     return {averages,total_average};
 }
 
-bool cluster::convergence(vector<centroid> centroids_old)
+bool cluster_Frechet::convergence(vector<centroid> centroids_old)
 {
     //Check if centroids converge by checking if they have the same
     //elements as previous assignment
     for (int i = 0; i < K; i++)
     {   
-        if(centroids[i].vectors.size() != centroids_old[i].vectors.size())
+        if(centroids[i].curves.size() != centroids_old[i].curves.size())
                 return false;
-        sort(centroids_old[i].vectors.begin(),centroids_old[i].vectors.end());
-        sort(centroids[i].vectors.begin(), centroids[i].vectors.end());
+        sort(centroids_old[i].curves.begin(),centroids_old[i].curves.end());
+        sort(centroids[i].curves.begin(), centroids[i].curves.end());
 
-        if(centroids[i].vectors!=centroids_old[i].vectors) return false;
+        if(centroids[i].curves!=centroids_old[i].curves) return false;
     }
     return true;
 }
 
 //Cluster Lloyd's
-cluster_lloyds::cluster_lloyds(int K,vector<vector<float>> vectors) : cluster(K,vectors)
+cluster_lloyds_Frechet::cluster_lloyds_Frechet(int K,vector<vector<vector<float>>> curves) : cluster_Frechet(K,curves)
 {
     //First assignment
     for(int i=0;i<n;i++)
     {
-        centroid_item ci={p:vectors[i],index:i};
+        centroid_item ci={p:curves[i],index:i};
         float minimum=numeric_limits<float>::max();
         int minimum_index;
         for (int v=0;v<K;v++)
         {
-            float distance=eucledian_distance(vectors[i],centroids[v].coordinates);
+            float distance=getDiscreteFrechetDistance(curves[i],centroids[v].coordinates);
             if(distance<minimum)
             {
                 minimum=distance;
                 minimum_index= v;
             }
         }
-        centroids[minimum_index].vectors.push_back(ci);
+        centroids[minimum_index].curves.push_back(ci);
     }
     //Assignment/Update
     while(true)
@@ -203,19 +181,19 @@ cluster_lloyds::cluster_lloyds(int K,vector<vector<float>> vectors) : cluster(K,
 
         for(int i=0;i<n;i++)
         {
-            centroid_item ci={p:vectors[i],index:i};
+            centroid_item ci={p:curves[i],index:i};
             float minimum=numeric_limits<float>::max();
             int minimum_index;
             for (int v=0;v<K;v++)
             {
-                float distance=eucledian_distance(vectors[i],centroids[v].coordinates);
+                float distance=getDiscreteFrechetDistance(curves[i],centroids[v].coordinates);
                 if(distance<minimum)
                 {
                     minimum=distance;
                     minimum_index= v;
                 }
             }
-            centroids[minimum_index].vectors.push_back(ci);
+            centroids[minimum_index].curves.push_back(ci);
         }
 
         if(convergence(centroids_old)==true)
