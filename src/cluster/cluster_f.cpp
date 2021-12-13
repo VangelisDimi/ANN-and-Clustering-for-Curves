@@ -76,7 +76,6 @@ cluster_Frechet::cluster_Frechet(int K,vector<vector<vector<float>>> curves)
 void cluster_Frechet::new_centroids()
 {
     //Create new centroids by calculating mean curve
-    
 };
 
 vector<cluster_Frechet::centroid> cluster_Frechet::get_clusters()
