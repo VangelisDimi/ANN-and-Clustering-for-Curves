@@ -42,7 +42,7 @@ void filter(vector<vector<vector<float>>> &curves)
 vector<vector<float>> snapCurve(vector<vector<float>> p, double delta, float t){
 	vector<vector<float>> snappedCurve;
 	for(int i=0; i<p.size(); i++){
-		float snapped_y = ((p[i][0]+t)/delta)*delta;
+		float snapped_y = floor((p[i][0]+t)/delta)*delta;
 		snappedCurve.push_back({snapped_y});
 	}
 	return snappedCurve;
