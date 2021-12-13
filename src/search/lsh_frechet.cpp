@@ -110,7 +110,7 @@ LSH_Frechet::LSH_Frechet(vector<vector<vector<float>>> input_curves,int k,int L,
 	LSH_Frechet::L=(metric!=CFD) ? L : 1 ;
 	LSH_Frechet::k=k;
 	LSH_Frechet::delta=delta;
-	w=150;
+	w=400;
 	vectorSize=(!input_curves.empty()) ? input_curves[0].size() : 0;
 	n=input_curves.size();
 	tableSize=ceil(n*hashtable_size_ratio);

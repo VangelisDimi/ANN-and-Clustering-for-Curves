@@ -41,7 +41,7 @@ int main(int argc, char *argv[]){
     int probes_cube=2; //-probes
     string algorithm; //-algorithm
     string metric; //-metric
-    double delta=0.1; //-delta
+    double delta=0.01; //-delta
 
     int k;
     bool k_flag=false;

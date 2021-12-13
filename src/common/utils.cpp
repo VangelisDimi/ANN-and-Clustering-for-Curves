@@ -22,9 +22,8 @@ using namespace std;
 namespace ONE_DIM
 {
 
-void filter(vector<vector<vector<float>>> &curves)
+void filter(vector<vector<vector<float>>> &curves,double e)
 {
-	double e=0.1;
 	for(unsigned int i=0;i<curves.size();i++)
 	{
 		unsigned int y=1;
@@ -89,6 +88,20 @@ vector<float> prepareCurve(vector<vector<float>> p, double delta,unsigned int ve
 
 namespace TWO_DIM
 {
+
+void filter(vector<vector<float>> curve,double e)
+{
+	unsigned int y=1;
+	while(y<curve.size()-1)
+	{
+		if(abs(curve[y+1][1]-curve[y][1])<e && abs(curve[y][1]-curve[y-1][1])<e)
+		{
+			curve.erase(curve.begin() + y);
+			continue;
+		}
+		y++;
+	}
+}
 
 vector<vector<float>> snapCurve(vector<vector<float>> p, double delta,float *t){
 	float _x;
