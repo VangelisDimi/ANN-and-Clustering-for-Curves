@@ -5,16 +5,17 @@
 
 #define FLT_MAX 3.40282e+038
 
-cluster_ANN_Frechet::cluster_ANN_Frechet(int K,vector<vector<float>> vectors) : cluster_Frechet(K,vectors)
+cluster_ANN_Frechet::cluster_ANN_Frechet(int K,vector<vector<vector<float>>> curves) : cluster_Frechet(K,curves)
 {
-    cluster_ANN::vectors=vectors;
+    cluster_ANN_Frechet::curves=curves;
+    cluster_ANN_Frechet::curveSize=(!curves.empty()) ? curves[0].size() : 0;
 }
 
 //cluster_ANN
 void cluster_ANN_Frechet::bruteforce_assignment(vector<tuple<int,int,float>> flagged_indexes)
 {
     int found = 0;
-    for(int i=0;i< cluster_ANN::vectors.size();i++)
+    for(int i=0;i< cluster_ANN_Frechet::curves.size();i++)
     {
         for(int j=0;j< flagged_indexes.size();j++)
             if(get<0>(flagged_indexes[j])==i){
@@ -24,19 +25,19 @@ void cluster_ANN_Frechet::bruteforce_assignment(vector<tuple<int,int,float>> fla
             found=0;
             continue;
         }
-        centroid_item ci={p:vectors[i],index:i};
+        centroid_item ci={p:curves[i],index:i};
         float minimum=numeric_limits<float>::max();
         int minimum_index;
-        for (int v=0;v< cluster::centroids.size();v++)
+        for (int v=0;v< cluster_Frechet::centroids.size();v++)
         {
-            float distance=eucledian_distance(cluster_ANN::vectors[i],cluster::centroids[v].coordinates);
+            float distance=getDiscreteFrechetDistance(cluster_ANN_Frechet::curves[i],cluster_Frechet::centroids[v].coordinates);
             if(distance<minimum)
             {
                 minimum=distance;
                 minimum_index= v;
             }
         }
-        centroids[minimum_index].vectors.push_back(ci);
+        centroids[minimum_index].curves.push_back(ci);
     }
 }
 
@@ -46,7 +47,7 @@ float cluster_ANN_Frechet::init_search_radius()
     float current_distance;
     for(int i=0;i<K;i++)
         for(int j=i+1;j<K;j++){
-            current_distance = eucledian_distance(cluster::centroids[i].coordinates, cluster::centroids[j].coordinates);
+            current_distance = getDiscreteFrechetDistance(cluster_Frechet::centroids[i].coordinates, cluster_Frechet::centroids[j].coordinates);
             if(current_distance<min_distance)
                 min_distance = current_distance;
         }
@@ -69,9 +70,9 @@ bool cluster_ANN_Frechet::terminationCriterion(float search_radius, int* updated
 }
 
 //Cluster LSH
-cluster_lsh_Frechet::cluster_lsh_Frechet(vector<vector<float>> vectors,int K,int k,int L) : cluster_ANN_Frechet(K,vectors), LSH_Frechet(vectors,k,L,L2,0.125)
+cluster_lsh_Frechet::cluster_lsh_Frechet(vector<vector<vector<float>>> curves,int K,int k,int L,double delta) : cluster_ANN_Frechet(K,curves), LSH_Frechet(curves,k,L,DFD,delta,0.125)
 {
-    LSH::clusterMode = true;
+    LSH_Frechet::clusterMode = true;
     //First assignment
     new_assignment();
 
@@ -80,6 +81,16 @@ cluster_lsh_Frechet::cluster_lsh_Frechet(vector<vector<float>> vectors,int K,int
     {
         vector<centroid> centroids_old=centroids;
         new_centroids();
+        for(int i=0;i<cluster_Frechet::centroids.size();i++)
+        {
+            double e=0.5;
+            while(cluster_Frechet::centroids[i].coordinates.size()>cluster_ANN_Frechet::curveSize)
+            {
+                TWO_DIM::filter(cluster_Frechet::centroids[i].coordinates,e,cluster_ANN_Frechet::curveSize);
+                e*=2;
+            }
+            cluster_Frechet::centroids[i].coordinates;
+        }
         new_assignment();
 
         if(convergence(centroids_old)==true)
@@ -95,9 +106,9 @@ void cluster_lsh_Frechet::new_assignment()
 
     rangeSearch_Assignment(flagged_indexes, search_radius);
 
-    cluster_ANN::bruteforce_assignment(flagged_indexes);
+    cluster_ANN_Frechet::bruteforce_assignment(flagged_indexes);
 
-    LSH::unmarkAssignedPoints();
+    LSH_Frechet::unmarkAssignedPoints();
 }
 
 void cluster_lsh_Frechet::rangeSearch_Assignment(vector<tuple<int,int,float>> flagged_indexes, float search_radius)
@@ -111,7 +122,7 @@ void cluster_lsh_Frechet::rangeSearch_Assignment(vector<tuple<int,int,float>> fl
         int found = 0;
 
         for(int i=0;i<K;i++){
-            vector<pair<float,unsigned int>> R_Nearest = LSH::find_R_nearest(cluster::centroids[i].coordinates, search_radius);
+            vector<pair<float,unsigned int>> R_Nearest = LSH_Frechet::find_R_nearest(cluster_Frechet::centroids[i].coordinates, search_radius);
             for(int j=0;j< R_Nearest.size();j++)
             {
                 int Index = get<unsigned int>(R_Nearest[j]);
@@ -122,8 +133,8 @@ void cluster_lsh_Frechet::rangeSearch_Assignment(vector<tuple<int,int,float>> fl
                         found = 1;
                 }
                 if(found!=1){      
-                    centroid_item ci={p:cluster_ANN::vectors[Index],index:Index};
-                    cluster::centroids[i].vectors.push_back(ci);
+                    centroid_item ci={p:cluster_ANN_Frechet::curves[Index],index:Index};
+                    cluster_Frechet::centroids[i].curves.push_back(ci);
                     new_indexes.push_back({Index,i,get<float>(R_Nearest[j])});
                     updatedCentroid[i]++;
                 }
@@ -144,10 +155,10 @@ void cluster_lsh_Frechet::rangeSearch_Assignment(vector<tuple<int,int,float>> fl
                 {
                     if(distancei<=distancej)
                     {
-                        for(int k=0;k< cluster::centroids[centroidj].vectors.size();k++)
+                        for(int k=0;k< cluster_Frechet::centroids[centroidj].curves.size();k++)
                         {
-                            if(centroids[centroidj].vectors[k].index==indexj){
-                                centroids[centroidj].vectors.erase(centroids[centroidj].vectors.begin()+k);
+                            if(centroids[centroidj].curves[k].index==indexj){
+                                centroids[centroidj].curves.erase(centroids[centroidj].curves.begin()+k);
                                 new_indexes.erase(new_indexes.begin()+j);
                                 updatedCentroid[centroidj]--;
                             }
@@ -155,10 +166,10 @@ void cluster_lsh_Frechet::rangeSearch_Assignment(vector<tuple<int,int,float>> fl
                     }
                     else               
                     {
-                        for(int k=0;k< cluster::centroids[centroidi].vectors.size();k++)
+                        for(int k=0;k< cluster_Frechet::centroids[centroidi].curves.size();k++)
                         {
-                            if(centroids[centroidi].vectors[k].index==indexi){
-                                centroids[centroidi].vectors.erase(centroids[centroidi].vectors.begin()+k);
+                            if(centroids[centroidi].curves[k].index==indexi){
+                                centroids[centroidi].curves.erase(centroids[centroidi].curves.begin()+k);
                                 new_indexes.erase(new_indexes.begin()+i);
                                 updatedCentroid[centroidi]--;
                             }

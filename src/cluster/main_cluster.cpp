@@ -14,6 +14,7 @@
 #include "cluster_ANN.hpp"
 #include "utils.hpp"
 #include "cluster_f.hpp"
+#include "cluster_ANN_f.hpp"
 
 using namespace std;
 
@@ -204,7 +205,16 @@ int main(int argc, char *argv[]){
 		}
 		else if(assignment=="LSH")
 		{
-			
+			double delta=0.01;
+			pair<vector<float>,float> silhouettes;
+			auto start_cluster = chrono::high_resolution_clock::now();
+			cluster_lsh_Frechet cluster(curves,K_cluster,k_lsh,L_lsh,delta);
+			auto stop_cluster = chrono::high_resolution_clock::now();
+			auto elapsed_cluster = stop_cluster - start_cluster ;
+			double time_cluster = chrono::duration<double>(elapsed_cluster).count();
+
+			if(silhouette) silhouettes=cluster.get_silhouettes_average();
+			write_file(output_file,cluster.get_clusters(),silhouettes,ids,time_cluster," Range Search LSH with "+update,complete,silhouette);
 		}
 	}
 

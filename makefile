@@ -38,18 +38,20 @@ clean_cluster:
 
 compile_cluster: mkdir
 	$(CC) ./src/cluster/main_cluster.cpp ./src/cluster/cluster.cpp ./src/cluster/cluster_ANN.cpp ./src/cube/cube.cpp ./src/lsh/lsh.cpp $(COMMON)/utils.cpp $(COMMON)/hash_functions.cpp \
-	 ./src/cluster/cluster_f.cpp \
+	 ./src/cluster/cluster_f.cpp ./src/cluster/cluster_ANN_f.cpp ./src/search/lsh_frechet.cpp \
 	 -o ./bin/cluster -I./include/cluster -I./include/lsh -I./include/cube -I./include/search $(CFLAGS)
 
 compile_debug_cluster:
-	
+	$(CC) ./src/cluster/main_cluster.cpp ./src/cluster/cluster.cpp ./src/cluster/cluster_ANN.cpp ./src/cube/cube.cpp ./src/lsh/lsh.cpp $(COMMON)/utils.cpp $(COMMON)/hash_functions.cpp \
+	 ./src/cluster/cluster_f.cpp ./src/cluster/cluster_ANN_f.cpp ./src/search/lsh_frechet.cpp \
+	 -o ./bin/cluster -I./include/cluster -I./include/lsh -I./include/cube -I./include/search $(DEBUGFLAGS)
 
 valgrind_cluster: mkdir
 	valgrind --leak-check=full \
 			--show-leak-kinds=all \
 			--track-origins=yes \
 			--verbose \
-			--log-file=./output/valgrind-out-lsh.txt \
+			--log-file=./output/valgrind-out-cluster.txt \
 			./bin/cluster $(ARGS)
 			
 run_cluster: compile_search

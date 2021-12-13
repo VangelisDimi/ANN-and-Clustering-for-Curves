@@ -89,7 +89,7 @@ vector<float> prepareCurve(vector<vector<float>> p, double delta,unsigned int ve
 namespace TWO_DIM
 {
 
-void filter(vector<vector<float>> curve,double e)
+void filter(vector<vector<float>> curve,double e,int target_size)
 {
 	unsigned int y=1;
 	while(y<curve.size()-1)
@@ -97,6 +97,7 @@ void filter(vector<vector<float>> curve,double e)
 		if(abs(curve[y+1][1]-curve[y][1])<e && abs(curve[y][1]-curve[y-1][1])<e)
 		{
 			curve.erase(curve.begin() + y);
+			if(curve.size()==target_size) return;
 			continue;
 		}
 		y++;
