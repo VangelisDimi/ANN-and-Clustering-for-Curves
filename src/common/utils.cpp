@@ -10,7 +10,8 @@
 #include <map>
 #include <algorithm>
 #include <stdio.h>
-#include <stdlib.h>    
+#include <stdlib.h>
+#include <list>    
 #include "utils.hpp"
 
 #include "frechet.hpp"
@@ -146,7 +147,6 @@ vector<float> prepareCurve(vector<vector<float>> p, double delta,unsigned int ve
 
 }
 
-
 float continuousFrechetDistance(vector<vector<float>> p, vector<vector<float>> q)
 {
 	// Point _p[p.size()]; 
@@ -182,6 +182,50 @@ float getDiscreteFrechetDistance(vector<vector<float>> p, vector<vector<float>> 
 		}
 	}
 	return c[p.size()-1][q.size()-1];
+}
+
+vector<vector<float>> MeanCurve(vector<vector<float>> p, vector<vector<float>> q)
+{
+	float c[p.size()][q.size()];
+	for(int i=0;i<p.size();i++)
+	{
+		for(int j=0;j<q.size();j++)
+		{
+			if(i==0 && j == 0)
+				c[0][0] = eucledian_distance(p[0],q[0]);
+			else if(i==0 && j>0)
+				c[i][j] = max(c[0][j-1],eucledian_distance(p[0],q[j]));
+			else if(i>0 && j==0)
+				c[i][j] = max(c[i-1][0],eucledian_distance(p[i],q[0]));
+			else
+				c[i][j] = max(min({c[i-1][j],c[i-1][j-1],c[i][j-1]}),eucledian_distance(p[i],q[j]));
+		}
+	}
+
+	list<pair<int,int>> traversal;
+	int Pi=p.size()-1,Qi=q.size()-1;
+	traversal.push_front({Pi,Qi});
+	while (Pi!=0 && Qi!=0)
+	{
+		vector<float> idxvec={c[Pi-1][Qi],c[Pi][Qi-1],c[Pi-1][Qi-1]};
+		int minidx=1;
+		for(int i=1;i<3;i++)
+			if(idxvec[i]<idxvec[minidx]) minidx=i;
+		if(minidx==0)
+			traversal.push_front({--Pi,Qi});
+		else if(minidx==1)
+			traversal.push_front({Pi,--Qi});
+		else
+			traversal.push_front({--Pi,--Qi});
+	}	
+
+	vector<vector<float>> meanvec;
+	for (auto it = traversal.begin(); it != traversal.end(); ++it)
+	{
+		int i=it->first;
+		int j=it->second;
+		meanvec.push_back({(p[i][0]+q[j][0])/2,(p[i][1]+q[j][1])/2});
+	}
 }
 
 
