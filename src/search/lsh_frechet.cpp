@@ -107,7 +107,7 @@ vector<pair<float,unsigned int>> LSH_Frechet::find_R_nearest(vector<vector<float
 LSH_Frechet::LSH_Frechet(vector<vector<vector<float>>> input_curves,int k,int L,int metric,double delta,float hashtable_size_ratio)//Constructor
 {
 	//Initialize values
-	LSH_Frechet::L=L;
+	LSH_Frechet::L=(metric!=CFD) ? L : 1 ;
 	LSH_Frechet::k=k;
 	LSH_Frechet::delta=delta;
 	w=150;
