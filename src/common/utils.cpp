@@ -11,7 +11,7 @@
 #include <algorithm>
 #include <stdio.h>
 #include <stdlib.h>
-#include <list>    
+#include <list>
 #include "utils.hpp"
 
 #include "frechet.hpp"
