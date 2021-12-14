@@ -74,7 +74,7 @@ vector<float> concatCurve(vector<vector<float>> p,unsigned int vector_size){
 	}
 
 	if( curveLength > concatedCurve.size() )
-		for(int i=0; i>curveLength-concatedCurve.size(); i++)
+		for(int i=0; i<curveLength-concatedCurve.size(); i++)
 			concatedCurve.push_back(std::numeric_limits<float>::max()-5);
 	return concatedCurve;
 }
@@ -89,7 +89,7 @@ vector<float> prepareCurve(vector<vector<float>> p, double delta,unsigned int ve
 namespace TWO_DIM
 {
 
-void filter(vector<vector<float>> curve,double e,int target_size)
+void filter(vector<vector<float>> curve,double e)
 {
 	unsigned int y=1;
 	while(y<curve.size()-1)
@@ -97,7 +97,6 @@ void filter(vector<vector<float>> curve,double e,int target_size)
 		if(abs(curve[y+1][1]-curve[y][1])<e && abs(curve[y][1]-curve[y-1][1])<e)
 		{
 			curve.erase(curve.begin() + y);
-			if(curve.size()==target_size) return;
 			continue;
 		}
 		y++;
@@ -149,7 +148,7 @@ vector<float> concatCurve(vector<vector<float>> p,unsigned int vector_size){
 
 	//Pad
 	if( curveLength > concatedCurve.size() )
-		for(int i=0; i>curveLength-concatedCurve.size(); i++)
+		for(int i=0; i<curveLength-concatedCurve.size(); i++)
 			concatedCurve.push_back(std::numeric_limits<float>::max()-5);
 	return concatedCurve;
 }
@@ -165,7 +164,6 @@ Curve convertVectorToCurve(vector<vector<float>> p){
 	Points points = Points(1);
 	for(int i = 0 ; i < p.size() ; i++)
 	{
-		// cout << i << " " << point << " " << p.size() << endl;
 		Point point = Point(1);
 		point.set(0, p[i][0]);
 		points.add(point);
