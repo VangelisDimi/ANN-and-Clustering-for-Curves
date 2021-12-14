@@ -4,12 +4,19 @@ all: compile_search
 COMMON 			?= ./src/common
 INCLUDE_COMMON 	?= ./include/common
 
-LIB_FILES ?= ./bin/lib/frechet.o ./bin/lib/curve.o ./bin/lib/config.o ./bin/lib/simplification.o ./bin/lib/point.o
-INCLUDE_LIB ?= -I./lib/Fred/include
+LIB_FILES 		?= ./bin/lib/frechet.o ./bin/lib/curve.o ./bin/lib/config.o ./bin/lib/simplification.o ./bin/lib/point.o
+INCLUDE_LIB 	?= -I./lib/Fred/include
 
 CC				= g++ -std=c++14
 CFLAGS 			?= -I$(INCLUDE_COMMON) $(INCLUDE_LIB) -O2
 DEBUGFLAGS 		?= -g -Wextra -Wall -I$(INCLUDE_COMMON) $(INCLUDE_LIB)  -O2
+
+INPUT_FILE 		?= ./examples/Datasets/nasd_input.csv
+QUERY_FILE 		?= ./examples/Datasets/nasd_query.csv
+OUTPUT_FILE 	?= results
+METRIC			?= Discrete
+ALGORITHM		?= Frechet
+ARGS 			?= -algorithm $(ALGORITHM) -metric $(METRIC) -i $(INPUT_FILE) -q $(QUERY_FILE) -o $(OUTPUT_FILE) 
 
 #search
 clean_search:
@@ -29,8 +36,8 @@ valgrind_search: mkdir
 			--log-file=./output/valgrind-out-lsh.txt \
 			./bin/search $(ARGS)
 			
-run_search: compile_search
-	./bin/search $(ARGS)
+run_search: clean_search compile_lib compile_search
+	./bin/search $(ARGS) 
 
 #cluster
 clean_cluster:
@@ -54,7 +61,7 @@ valgrind_cluster: mkdir
 			--log-file=./output/valgrind-out-cluster.txt \
 			./bin/cluster $(ARGS)
 			
-run_cluster: compile_search
+run_cluster: clean_cluster compile_search
 	./bin/cluster $(ARGS)
 
 
