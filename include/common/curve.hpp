@@ -12,7 +12,7 @@
 
 using namespace std;
 
-class Curve : private Points {
+class Curve : private Points
 {
 private:
     int vstart = 0, vend = 0;
