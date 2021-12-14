@@ -14,7 +14,7 @@ DEBUGFLAGS 		?= -g -Wextra -Wall -I$(INCLUDE_COMMON) $(INCLUDE_LIB)  -O2
 INPUT_FILE 		?= ./examples/Datasets/nasd_input.csv
 QUERY_FILE 		?= ./examples/Datasets/nasd_query.csv
 OUTPUT_FILE 	?= results
-METRIC			?= Discrete
+METRIC			?= continuous
 ALGORITHM		?= Frechet
 ARGS 			?= -algorithm $(ALGORITHM) -metric $(METRIC) -i $(INPUT_FILE) -q $(QUERY_FILE) -o $(OUTPUT_FILE) 
 

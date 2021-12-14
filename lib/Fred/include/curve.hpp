@@ -136,7 +136,7 @@ public:
             if (dim == 0) {
                 dim = curve.dimensions();
             } else {
-                std::cerr << "Wrong number of dimensions; expected " << dim << " dimensions and got " << curve.dimensions() << " dimensions." << std::endl;
+                std::cerr << "Curve::Wrong number of dimensions; expected " << dim << " dimensions and got " << curve.dimensions() << " dimensions." << std::endl;
                 return;
             }
         }

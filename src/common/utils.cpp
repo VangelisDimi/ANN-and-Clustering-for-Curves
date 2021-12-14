@@ -161,21 +161,21 @@ vector<float> prepareCurve(vector<vector<float>> p, double delta,unsigned int ve
 
 }
 
+Curve convertVectorToCurve(vector<vector<float>> p){
+	Points points = Points(1);
+	for(int i = 0 ; i < p.size() ; i++)
+	{
+		// cout << i << " " << point << " " << p.size() << endl;
+		Point point = Point(1);
+		point.set(0, p[i][0]);
+		points.add(point);
+	}
+	return Curve(points);
+}
+
 float continuousFrechetDistance(vector<vector<float>> p, vector<vector<float>> q)
 {
-	// Point _p[p.size()]; 
-	// Point _q[q.size()];
-	// for(int i = 0 ; i < p.size() ; i++)
-	// {
-	// 	_p[i]=Point(p[i]);
-	// }
-	// for(int y = 0 ; y < q.size() ; y++)
-	// {
-	// 	_q[i]=Point(q[i]);
-	// }
-
-	// return Frechet::Continuous::distance(Curve(Points((curve_size_t) p.size(),_p)),Curve(Points((curve_size_t) q.size(),_q))).value;
-	return 0;
+	return Frechet::Continuous::distance(convertVectorToCurve(p), convertVectorToCurve(q)).value;
 }
 
 float getDiscreteFrechetDistance(vector<vector<float>> p, vector<vector<float>> q)

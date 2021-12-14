@@ -5,7 +5,8 @@
 using namespace std;
 #include <string>
 #include <map>
-
+#include "frechet.hpp"
+#include "curve.hpp"
 #include "exhaustive_search.hpp"
 
 namespace ONE_DIM{
@@ -20,7 +21,7 @@ namespace TWO_DIM{
     vector<float> concatCurve(vector<vector<float>> p,unsigned int vector_size);
     vector<float> prepareCurve(vector<vector<float>> p, double delta,unsigned int vector_size,float *t);
 }
-
+Curve convertVectorToCurve(vector<vector<float>> p);
 float continuousFrechetDistance(vector<vector<float>> p, vector<vector<float>> q);
 float getDiscreteFrechetDistance(vector<vector<float>> p, vector<vector<float>> q);
 vector<vector<float>> MeanCurve(vector<vector<float>> p, vector<vector<float>> q);

@@ -205,7 +205,7 @@ public:
     
     inline void add(Point &point) {
         if (point.dimensions() != dim) {
-            std::cerr << "Wrong number of dimensions; expected " << dim << " dimensions and got " << point.dimensions() << " dimensions." << std::endl;
+            std::cerr << "Points::Wrong number of dimensions; expected " << dim << " dimensions and got " << point.dimensions() << " dimensions." << std::endl;
             return;
         }
         push_back(point);
