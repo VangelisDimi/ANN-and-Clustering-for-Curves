@@ -6,8 +6,6 @@ using namespace std;
 #include <string>
 #include <map>
 
-#include "exhaustive_search.hpp"
-
 namespace ONE_DIM{
     void filter(vector<vector<vector<float>>> &curves,double e=0.1);
     vector<vector<float>> snapCurve(vector<vector<float>> p, double delta,float t);
