@@ -18,6 +18,7 @@ public:
     }
     Node;
     Node* root;
+    Node** children;
     vector<vector<float>> curves;
     int height = 0;
     int n = 0;
