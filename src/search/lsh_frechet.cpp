@@ -166,6 +166,8 @@ LSH_Frechet::LSH_Frechet(vector<vector<vector<float>>> input_curves,int k,int L,
 	}
 
 	//Add vectors to L hashtables
+	vector<float> vector1;
+	vector<float> vector2;
 	for(int i=0; i<n; i++)
 	{
 		for(int y=0;y<L;y++)
@@ -175,6 +177,8 @@ LSH_Frechet::LSH_Frechet(vector<vector<vector<float>>> input_curves,int k,int L,
 			hashtables[y].insert(p.ID,p);
 		}
 	}
+	// cout << "disc " << getDiscreteFrechetDistance(input_curves[0],input_curves[1]) << endl;
+	// cout << "cont " << continuousFrechetDistance(input_curves[0],input_curves[1]) << endl;
 };
 
 LSH_Frechet::~LSH_Frechet()//Destructor

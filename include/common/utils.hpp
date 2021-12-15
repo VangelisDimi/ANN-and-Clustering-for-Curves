@@ -24,7 +24,7 @@ namespace TWO_DIM{
 Curve convertVectorToCurve(vector<vector<float>> p);
 float continuousFrechetDistance(vector<vector<float>> p, vector<vector<float>> q);
 float getDiscreteFrechetDistance(vector<vector<float>> p, vector<vector<float>> q);
-vector<vector<float>> MeanCurve(vector<vector<float>> p, vector<vector<float>> q);
+vector<vector<float>> meanCurve(vector<vector<float>> p, vector<vector<float>> q);
 
 float eucledian_distance(vector<float>,vector<float>);
 float normal_distribution_rng();

@@ -165,7 +165,6 @@ Curve convertVectorToCurve(vector<vector<float>> p){
 	Points points = Points(1);
 	for(int i = 0 ; i < p.size() ; i++)
 	{
-		// cout << i << " " << point << " " << p.size() << endl;
 		Point point = Point(1);
 		point.set(0, p[i][0]);
 		points.add(point);
@@ -198,8 +197,12 @@ float getDiscreteFrechetDistance(vector<vector<float>> p, vector<vector<float>> 
 	return c[p.size()-1][q.size()-1];
 }
 
-vector<vector<float>> MeanCurve(vector<vector<float>> p, vector<vector<float>> q)
+vector<vector<float>> meanCurve(vector<vector<float>> p, vector<vector<float>> q)
 {
+	if(p.empty())
+		return q;
+	if(q.empty())
+		return p;
 	float c[p.size()][q.size()];
 	for(int i=0;i<p.size();i++)
 	{

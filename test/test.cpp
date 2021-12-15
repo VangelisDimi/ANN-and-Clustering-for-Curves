@@ -22,7 +22,7 @@ void FrechetTestCase::testDiscreteDist()
 void FrechetTestCase::testMeanCurve()
 {
     vector<vector<float>> vec={{2,3},{3,4},{5,6}};
-    vector<vector<float>> mean=MeanCurve(vec,vec);
+    vector<vector<float>> mean=meanCurve(vec,vec);
     CPPUNIT_ASSERT_MESSAGE("Mean of two same vectors is not the same size as those vectors",vec.size()==mean.size());
 
     int equal_elements=0;
