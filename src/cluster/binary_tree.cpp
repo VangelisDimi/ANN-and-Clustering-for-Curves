@@ -14,6 +14,7 @@ Tree::Tree(int n, vector<centroid_item>)
     {
         
     }
+    postOrderTraversal(root);
 }
 
 Tree::vector<vector<float>> postOrderTraversal(Node* node)
