@@ -46,7 +46,7 @@ protected:
     int n;
     
     cluster_Frechet(int K,vector<vector<vector<float>>> curves);
-
+    vector<vector<float>> calculateMeanCurve(int i);
     void new_centroids();
     bool convergence(vector<centroid> centroids_old);
 };
