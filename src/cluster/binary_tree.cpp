@@ -8,13 +8,10 @@ Tree::Tree(vector<centroid_item> curves)
 {
     Tree::n = curves.size();
     Tree::height = floor(log2(n));
+    for(int i=0;i<n;i++)
+        Tree::curves.push_back(curves.p)
     cout << "Constructing new Tree" << endl;
-    Node* currentNode = root;
-    for(int i=0;i<height;i++)
-    {
-        
-    }
-    root->curve = postOrderTraversal(root);
+    placeChildren();
 }
 
 Tree::vector<vector<float>> postOrderTraversal(Node* node)
@@ -38,8 +35,12 @@ Tree::bool isLeaf(Node* node)
         return false;
 }
 
-Tree::vector<vector<float>> getMeanCurve()
+Tree::placeChildren()
 {
-    return root->curve;
+    Node* currentNode = root;
+    for(int i=0;i<height;i++)
+    {
+        
+    }
 }
 
