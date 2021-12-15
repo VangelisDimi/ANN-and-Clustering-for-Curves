@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <climits>
 
-Tree()
+Tree::Tree()
 {
     cout << "Constructing new Tree" << endl;
 }
