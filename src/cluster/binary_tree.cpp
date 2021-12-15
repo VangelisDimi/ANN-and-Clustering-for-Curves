@@ -8,7 +8,7 @@ Tree()
     cout << "Constructing new Tree" << endl;
 }
 
-vector<vector<float>> postOrderTraversal(Tree::Node* node)
+Tree::vector<vector<float>> postOrderTraversal(Node* node)
 {
     vector<vector<float>> leftCurve;
     vector<vector<float>> rightCurve;
@@ -22,7 +22,7 @@ vector<vector<float>> postOrderTraversal(Tree::Node* node)
 }
 
 
-bool isLeaf(Tree::Node* node) {
+Tree::bool isLeaf(Node* node) {
     if(node->leftChild == NULL && node->rightChild == NULL)
         return true; 
     else
