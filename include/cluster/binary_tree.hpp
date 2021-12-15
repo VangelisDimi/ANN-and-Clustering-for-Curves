@@ -19,8 +19,8 @@ public:
 
 protected:
     Tree();
-    vector<vector<float>> postOrderTraversal(Node node);
-    bool isLeaf(Node node);
+    vector<vector<float>> postOrderTraversal(Node* node);
+    bool isLeaf(Node* node);
 
 };
 

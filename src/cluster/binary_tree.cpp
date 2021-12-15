@@ -21,7 +21,6 @@ Tree::vector<vector<float>> postOrderTraversal(Node* node)
         return meanCurve(leftCurve, rightCurve);
 }
 
-
 Tree::bool isLeaf(Node* node) {
     if(node->leftChild == NULL && node->rightChild == NULL)
         return true; 
