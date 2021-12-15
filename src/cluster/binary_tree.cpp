@@ -3,6 +3,11 @@
 #include <algorithm>
 #include <climits>
 
+Tree()
+{
+    cout << "Constructing new Tree" << endl;
+}
+
 vector<vector<float>> postOrderTraversal(Tree::Node* node)
 {
     vector<vector<float>> leftCurve;
