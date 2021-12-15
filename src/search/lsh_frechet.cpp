@@ -155,7 +155,6 @@ LSH_Frechet::LSH_Frechet(vector<vector<vector<float>>> input_curves,int k,int L,
 	}
 	else if(metric==CFD)
 	{
-		ONE_DIM::filter(input_curves);
 		distance=&continuousFrechetDistance;
 		prepare_curve=&ONE_DIM::prepareCurve;
 		for(int i=0;i<L;i++)
