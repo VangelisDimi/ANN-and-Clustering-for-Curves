@@ -13,8 +13,8 @@ public:
     typedef struct Node
     {
         vector<vector<float>> curve;
-        Node* leftChild = NULL;
-        Node* rightChild = NULL;
+        Node* leftChild;
+        Node* rightChild;
     }
     Node;
     Node* root;

@@ -37,6 +37,14 @@ Tree::bool isLeaf(Node* node)
 
 Tree::placeChildren()
 {
+    Node children[n];
+    for(int i=0;i<n;i++)
+    {
+        children[i] = Node();
+        children[i].curve = curves[i];
+        children[i].leftChild = NULL;
+        children[i].rightChild = NULL;
+    }
     Node* currentNode = root;
     for(int i=0;i<height;i++)
     {
