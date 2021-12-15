@@ -2,9 +2,12 @@
 #include "utils.hpp"
 #include <algorithm>
 #include <climits>
+#include <math.h>     
 
-Tree::Tree()
+Tree::Tree(int n, vector<centroid_item>)
 {
+    Tree::n = n;
+    Tree::height = floor(log2(n));
     cout << "Constructing new Tree" << endl;
 }
 
@@ -21,10 +24,16 @@ Tree::vector<vector<float>> postOrderTraversal(Node* node)
         return meanCurve(leftCurve, rightCurve);
 }
 
-Tree::bool isLeaf(Node* node) {
+Tree::bool isLeaf(Node* node)  
+{
     if(node->leftChild == NULL && node->rightChild == NULL)
         return true; 
     else
         return false;
+}
+
+Tree::vector<vector<float>> getMeanCurve()
+{
+    return root->curve;
 }
 
