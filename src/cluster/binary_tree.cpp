@@ -11,10 +11,8 @@ vector<vector<float>> postOrderTraversal(Tree::Node* node)
         return node->curve;
     else
         leftCurve = postOrderTraversal(node->leftChild);
-        if (node->rightChild == NULL)
+        if (node->rightChild != NULL)
             rightCurve = postOrderTraversal(node->rightChild);
-        // else
-        //     rightCurve = NULL;
         return meanCurve(leftCurve, rightCurve);
 }
 
