@@ -14,7 +14,7 @@ Tree::Tree(vector<centroid_item> curves)
     {
         
     }
-    postOrderTraversal(root);
+    root->curve = postOrderTraversal(root);
 }
 
 Tree::vector<vector<float>> postOrderTraversal(Node* node)
