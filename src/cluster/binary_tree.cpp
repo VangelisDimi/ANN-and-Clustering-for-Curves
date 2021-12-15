@@ -9,6 +9,11 @@ Tree::Tree(int n, vector<centroid_item>)
     Tree::n = n;
     Tree::height = floor(log2(n));
     cout << "Constructing new Tree" << endl;
+    Node* currentNode = NULL;
+    for(int i=0;i<height;i++)
+    {
+        
+    }
 }
 
 Tree::vector<vector<float>> postOrderTraversal(Node* node)
