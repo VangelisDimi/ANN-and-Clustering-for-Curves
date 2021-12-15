@@ -79,8 +79,8 @@ void cluster_Frechet::new_centroids()
     vector<vector<float>> new_centroids;
     for (int i=0;i<K;i++)
     {
-        tree = Tree(centroids[i].curves);
-        centroids[i].coordinates = tree.getMeanCurve();
+        calculator = Tree(centroids[i].curves);
+        centroids[i].coordinates = calculator.getMeanCurve();
         centroids[i].curves.clear();
     }
 };
