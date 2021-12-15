@@ -13,10 +13,15 @@ DEBUGFLAGS 		?= -g -Wextra -Wall -I$(INCLUDE_COMMON) $(INCLUDE_LIB)  -O2
 
 INPUT_FILE 		?= ./examples/Datasets/nasd_input.csv
 QUERY_FILE 		?= ./examples/Datasets/nasd_query.csv
+CONFIG_FILE     ?= ./examples/cluster_example.conf
 OUTPUT_FILE 	?= results
-METRIC			?= continuous
+METRIC			?= discrete
 ALGORITHM		?= Frechet
-ARGS 			?= -algorithm $(ALGORITHM) -metric $(METRIC) -i $(INPUT_FILE) -q $(QUERY_FILE) -o $(OUTPUT_FILE) 
+UPDATE			?= "Mean Frechet"
+ASSIGNMENT      ?= Classic
+
+ARGS_SEARCH 	?= -algorithm $(ALGORITHM) -metric $(METRIC) -i $(INPUT_FILE) -q $(QUERY_FILE) -o $(OUTPUT_FILE)_search
+ARGS_CLUSTER 	?= -i $(INPUT_FILE) -o $(OUTPUT_FILE)_cluster -c $(CONFIG_FILE) -update $(UPDATE) -assignment $(ASSIGNMENT) -silhouette -complete
 
 #search
 clean_search:
@@ -36,8 +41,8 @@ valgrind_search: mkdir
 			--log-file=./output/valgrind-out-lsh.txt \
 			./bin/search $(ARGS)
 			
-run_search: clean_search compile_lib compile_search
-	./bin/search $(ARGS) 
+run_search:
+	./bin/search $(ARGS_SEARCH) 
 
 #cluster
 clean_cluster:
@@ -61,8 +66,8 @@ valgrind_cluster: mkdir
 			--log-file=./output/valgrind-out-cluster.txt \
 			./bin/cluster $(ARGS)
 			
-run_cluster: clean_cluster compile_search
-	./bin/cluster $(ARGS)
+run_cluster:
+	./bin/cluster $(ARGS_CLUSTER)
 
 #test
 install_test_lib:
