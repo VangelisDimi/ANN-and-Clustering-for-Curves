@@ -22,7 +22,8 @@ public:
     int n = 0;
 
 protected:
-    Tree(int n, vector<centroid_item>);
+    Tree(vector<centroid_item> curves);
+    ~Tree() {}
     vector<vector<float>> postOrderTraversal(Node* node);
     bool isLeaf(Node* node);
     vector<vector<float>> getMeanCurve();

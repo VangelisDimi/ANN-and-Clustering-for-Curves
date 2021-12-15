@@ -4,9 +4,9 @@
 #include <climits>
 #include <math.h>     
 
-Tree::Tree(int n, vector<centroid_item>)
+Tree::Tree(vector<centroid_item> curves)
 {
-    Tree::n = n;
+    Tree::n = curves.size();
     Tree::height = floor(log2(n));
     cout << "Constructing new Tree" << endl;
     Node* currentNode = root;
