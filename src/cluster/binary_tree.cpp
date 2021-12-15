@@ -9,7 +9,7 @@ Tree::Tree(int n, vector<centroid_item>)
     Tree::n = n;
     Tree::height = floor(log2(n));
     cout << "Constructing new Tree" << endl;
-    Node* currentNode = NULL;
+    Node* currentNode = root;
     for(int i=0;i<height;i++)
     {
         
