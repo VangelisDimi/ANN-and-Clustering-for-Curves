@@ -82,7 +82,6 @@ compile_test:
 run_test:
 	./bin/test/test
 
-
 #lib
 LIB_FLAGS = -march=native -Ofast -static-libgcc -static-libstdc++ -std=c++14 -fpermissive -fPIC -ffast-math -fno-trapping-math -ftree-vectorize
 compile_lib:

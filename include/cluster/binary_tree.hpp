@@ -10,13 +10,6 @@ using namespace std;
 class Tree
 {
 public:
-    typedef struct Node
-    {
-        vector<vector<float>> curve;
-        Node* leftChild;
-        Node* rightChild;
-    }
-    Node;
     Node* root;
     Node** children;
     vector<vector<float>> curves;
@@ -29,6 +22,20 @@ protected:
     placeChildren();
     vector<vector<float>> postOrderTraversal(Node* node);
     bool isLeaf(Node* node);
+};
+
+class Node
+{
+public:
+    vector<vector<float>> curve;
+    Node* leftChild;
+    Node* rightChild;
+
+protected:
+    Node(): leftChild(NULL), rightChild(NULL) {}
+    Node(vector<vector<float>> curve): curve(curve), leftChild(NULL), rightChild(NULL) {}
+    Node(vector<vector<float>> curve, Node* leftChild, Node* rightChild): curve(curve), leftChild(leftChild), rightChild(rightChild) {}
+    ~Node() {}
 };
 
 #endif
