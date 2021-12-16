@@ -77,7 +77,7 @@ remove_test_lib:
 
 compile_test:
 	mkdir -p ./bin/test
-	$(CC) ./test/test.cpp ./src/common/utils.cpp \
+	$(CC) ./test/test.cpp ./src/common/utils.cpp $(LIB_FILES) \
 	-o ./bin/test/test $(CFLAGS) -lcppunit
 run_test:
 	./bin/test/test

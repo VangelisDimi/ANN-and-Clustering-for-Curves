@@ -19,6 +19,12 @@ void FrechetTestCase::testDiscreteDist()
     CPPUNIT_ASSERT(getDiscreteFrechetDistance( {{2,3},{3,4},{5,6}} , {{2,3},{3,4},{5,6}} ) == 0);
 }
 
+void FrechetTestCase::testContinuousDist()
+{
+    CPPUNIT_ASSERT(continuousFrechetDistance( {{2},{3},{5}} , {{2},{3},{5}} ) == 0);
+}
+
+
 void FrechetTestCase::testMeanCurve()
 {
     vector<vector<float>> vec={{2,3},{3,4},{5,6}};
