@@ -38,8 +38,8 @@ valgrind_search: mkdir
 			--show-leak-kinds=all \
 			--track-origins=yes \
 			--verbose \
-			--log-file=./output/valgrind-out-lsh.txt \
-			./bin/search $(ARGS)
+			--log-file=./output/valgrind-out-search.txt \
+			./bin/search $(ARGS_SEARCH)
 			
 run_search:
 	./bin/search $(ARGS_SEARCH) 
@@ -64,7 +64,7 @@ valgrind_cluster: mkdir
 			--track-origins=yes \
 			--verbose \
 			--log-file=./output/valgrind-out-cluster.txt \
-			./bin/cluster $(ARGS)
+			./bin/cluster $(ARGS_CLUSTER)
 			
 run_cluster:
 	./bin/cluster $(ARGS_CLUSTER)
