@@ -125,7 +125,7 @@ pair<vector<float>,float> cluster::get_silhouettes_average()
                 if(a==v) continue;
                 a_vector+=eucledian_distance(centroids[i].vectors[v].p,centroids[i].vectors[a].p);
             }
-            a_vector/=centroids[i].vectors.size();
+            a_vector/=centroids[i].vectors.size()-1;
 
             float minimum=numeric_limits<float>::max();
             int minimum_index;
