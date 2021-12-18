@@ -73,7 +73,7 @@ cluster_Frechet::cluster_Frechet(int K,vector<vector<vector<float>>> curves)
     }
 }
 
-void cluster_Frechet::vector<vector<float>> calculateMeanCurve(int i)
+vector<vector<float>> cluster_Frechet::calculateMeanCurve(int i)
 {
     tree = Tree(centroids[i].curves);
     return tree.postOrderTraversal();
@@ -116,7 +116,7 @@ pair<vector<float>,float> cluster_Frechet::get_silhouettes_average()
                 if(a==v) continue;
                 a_vector+=getDiscreteFrechetDistance(centroids[i].curves[v].p,centroids[i].curves[a].p);
             }
-            a_vector/=centroids[i].curves.size()-1;
+            a_vector/=centroids[i].curves.size();
 
             float minimum=numeric_limits<float>::max();
             int minimum_index;

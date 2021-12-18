@@ -162,6 +162,7 @@ LSH_Frechet::LSH_Frechet(vector<vector<vector<float>>> input_curves,int k,int L,
 			t_snap[i]=new float[1];
 			t_snap[i][0]=uniform_distribution_rng_float(0,delta-numeric_limits<float>::epsilon());
 		}
+		ONE_DIM::filter(input_curves);
 	}
 
 	//Add vectors to L hashtables
