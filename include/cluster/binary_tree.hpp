@@ -15,6 +15,7 @@ public:
     vector<vector<float>> curves;
     int height = 0;
     int n = 0;
+    int curveSize;
 
 protected:
     Tree(vector<centroid_item> curves);

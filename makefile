@@ -50,12 +50,12 @@ clean_cluster:
 
 compile_cluster: mkdir
 	$(CC) ./src/cluster/main_cluster.cpp ./src/cluster/cluster.cpp ./src/cluster/cluster_ANN.cpp ./src/cube/cube.cpp ./src/lsh/lsh.cpp $(COMMON)/utils.cpp $(COMMON)/hash_functions.cpp \
-	 ./src/cluster/cluster_f.cpp ./src/cluster/cluster_ANN_f.cpp ./src/search/lsh_frechet.cpp $(LIB_FILES) \
+	 ./src/cluster/cluster_f.cpp ./src/cluster/cluster_ANN_f.cpp ./src/search/lsh_frechet.cpp ./src/cluster/binary_tree.cpp $(LIB_FILES) \
 	 -o ./bin/cluster -I./include/cluster -I./include/lsh -I./include/cube -I./include/search $(CFLAGS)
 
 compile_debug_cluster:
 	$(CC) ./src/cluster/main_cluster.cpp ./src/cluster/cluster.cpp ./src/cluster/cluster_ANN.cpp ./src/cube/cube.cpp ./src/lsh/lsh.cpp $(COMMON)/utils.cpp $(COMMON)/hash_functions.cpp \
-	 ./src/cluster/cluster_f.cpp ./src/cluster/cluster_ANN_f.cpp ./src/search/lsh_frechet.cpp $(LIB_FILES) \
+	 ./src/cluster/cluster_f.cpp ./src/cluster/cluster_ANN_f.cpp ./src/search/lsh_frechet.cpp ./src/cluster/binary_tree.cpp $(LIB_FILES) \
 	 -o ./bin/cluster -I./include/cluster -I./include/lsh -I./include/cube -I./include/search $(DEBUGFLAGS)
 
 valgrind_cluster: mkdir

@@ -8,6 +8,7 @@ Tree::Tree(vector<centroid_item> curves)
 {
     Tree::n = curves.size();
     Tree::height = floor(log2(n));
+    Tree::curveSize = curves[0].p.size();
     for(int i=0;i<n;i++)
         Tree::curves.push_back(curves.p)
     cout << "Constructing new Tree" << endl;
@@ -24,7 +25,14 @@ Tree::vector<vector<float>> postOrderTraversal(Node* node)
         leftCurve = postOrderTraversal(node->leftChild);
         if (node->rightChild != NULL)
             rightCurve = postOrderTraversal(node->rightChild);
-        return meanCurve(leftCurve, rightCurve);
+        vector<vector<float>> meancurve=meanCurve(leftCurve, rightCurve);
+        double e=0.1;
+        while(meancurve.size()>curveSize)
+        {
+            TWO_DIM::filter(meancurve,e);
+            e*=2;
+        }
+        return meanCurve;
 }
 
 Tree::bool isLeaf(Node* node)  
@@ -43,7 +51,6 @@ Tree::placeChildren()
         children[i] = new Node(curves[i]);
     Node** parents;
     for(int i=0;i<nParents;i++)
-        parents[i] = new Node
-
+        parents[i] = new Node;
 }
 
