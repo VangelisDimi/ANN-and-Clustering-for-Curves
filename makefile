@@ -21,7 +21,7 @@ UPDATE			?= "Mean Frechet"
 ASSIGNMENT      ?= Classic
 
 ARGS_SEARCH 	?= -algorithm $(ALGORITHM) -metric $(METRIC) -i $(INPUT_FILE) -q $(QUERY_FILE) -o $(OUTPUT_FILE)_search
-ARGS_CLUSTER 	?= -i $(INPUT_FILE) -o $(OUTPUT_FILE)_cluster -c $(CONFIG_FILE) -update $(UPDATE) -assignment $(ASSIGNMENT) -silhouette -complete
+ARGS_CLUSTER 	?= -i $(INPUT_FILE) -o $(OUTPUT_FILE)_cluster -c $(CONFIG_FILE) -update $(UPDATE) -assignment $(ASSIGNMENT) -complete
 
 #search
 clean_search:
