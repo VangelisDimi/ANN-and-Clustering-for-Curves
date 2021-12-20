@@ -44,7 +44,6 @@ public:
 
 protected:
 
-    void placeChildren();
     bool isLeaf(Node* node);
 };
 
