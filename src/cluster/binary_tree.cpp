@@ -18,7 +18,6 @@ vector<vector<float>> postOrderTraversal(Tree::Node* node)
         return meanCurve(leftCurve, rightCurve);
 }
 
-
 bool isLeaf(Tree::Node* node) {
     if(node->leftChild == NULL && node->rightChild == NULL)
         return true; 
