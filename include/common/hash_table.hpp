@@ -17,7 +17,7 @@ public:
     hash_table(unsigned int size=28083486)
     {
         hash_table::Buckets = vector<vector<V>>(size);
-        hash_table::tablesize=size;iteration
+        hash_table::tablesize=size;
     };
 
     void insert(unsigned int key,V value)
