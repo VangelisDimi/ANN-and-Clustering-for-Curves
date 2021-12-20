@@ -8,7 +8,7 @@
 Tree::Tree(vector<cluster_Frechet::centroid_item> OGcurves)
 {
     Tree::n = OGcurves.size();
-    Tree::height = floor(log2(n));
+    Tree::height = ceil(log2(n));
     Tree::root = NULL;
     Tree::mycounter = 0;
     if(OGcurves.size()>0)
@@ -104,7 +104,6 @@ void Tree::placeChildren()
         else if(i>0 && i<floors.size()-1){
             int counter=0;
             for(int j=0;j<floors[i];j++){
-                debug("yo " <<j<<" is "<<structure[i-1][j]);
                 if (counter<floors[i]-1) childx = structure[i-1][counter++];
                 else childx = NULL;
                 if (counter<floors[i]-1) childy = structure[i-1][counter++];
@@ -144,6 +143,7 @@ Tree::~Tree(){
     //     }
     //     delete[] structure;
     // }
+    deleteNode(root);
 }
 
 Node* Tree::createNode(int level)
@@ -161,4 +161,14 @@ Node* Tree::createNode(int level)
         else return NULL;
     }
 }
+
+void Tree::deleteNode(Node* node)
+{
+    if(node->leftChild!=NULL)
+        deleteNode(node->leftChild);
+    if(node->rightChild!=NULL)
+        deleteNode(node->rightChild);
+    delete node;
+}
+
 

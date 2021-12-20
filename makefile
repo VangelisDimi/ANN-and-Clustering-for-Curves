@@ -33,12 +33,13 @@ compile_search: mkdir
 compile_debug_search:
 	$(CC) ./src/search/main_search.cpp ./src/lsh/lsh.cpp ./src/cube/cube.cpp ./src/search/lsh_frechet.cpp $(COMMON)/hash_functions.cpp $(COMMON)/utils.cpp $(COMMON)/exhaustive_search.cpp $(LIB_FILES) -o ./bin/search -I./include/lsh -I./include/cube -I./include/search $(DEBUGFLAGS)
 
-valgrind_search: mkdir
+valgrind_search: clean_search compile_debug_search 
 	valgrind --leak-check=full \
 			--show-leak-kinds=all \
 			--track-origins=yes \
 			--verbose \
 			--log-file=./output/valgrind-out-search.txt \
+			--error-limit=no \
 			./bin/search $(ARGS_SEARCH)
 			
 run_search:
@@ -63,12 +64,13 @@ compile_debug_cluster:
 gdb_cluster: clean_cluster compile_debug_cluster
 	gdb --args ./bin/cluster $(ARGS_CLUSTER)
 
-valgrind_cluster: mkdir
+valgrind_cluster: clean_cluster compile_debug_cluster 
 	valgrind --leak-check=full \
 			--show-leak-kinds=all \
 			--track-origins=yes \
 			--verbose \
 			--log-file=./output/valgrind-out-cluster.txt \
+			--error-limit=no \
 			./bin/cluster $(ARGS_CLUSTER)
 			
 run_cluster:
@@ -103,4 +105,4 @@ mkdir:
 	mkdir -p ./bin
 	mkdir -p ./output
 
-cleanall: clean_search
+cleanall: clean_search clean_cluster

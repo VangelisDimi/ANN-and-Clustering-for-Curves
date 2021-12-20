@@ -40,6 +40,7 @@ public:
     ~Tree();
     vector<vector<float>> postOrderTraversal(Node* node);
     Node* createNode(int level);
+    void deleteNode(Node* node);
 
 protected:
 
