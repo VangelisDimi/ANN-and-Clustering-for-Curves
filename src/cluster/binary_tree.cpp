@@ -51,6 +51,6 @@ void Tree::placeChildren()
         children[i] = new Node(curves[i]);
     Node** parents;
     for(int i=0;i<nParents;i++)
-        parents[i] = new Node;
+        parents[i] = new Node();
 }
 
