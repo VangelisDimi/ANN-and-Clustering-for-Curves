@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <iterator>
 #include "cluster_f.hpp"
+#include "binary_tree.hpp"
 #include "utils.hpp"
 #include<iostream>
 
@@ -75,7 +76,7 @@ cluster_Frechet::cluster_Frechet(int K,vector<vector<vector<float>>> curves)
 
 vector<vector<float>> cluster_Frechet::calculateMeanCurve(int i)
 {
-    tree = Tree(centroids[i].curves);
+    Tree tree = Tree(centroids[i].curves);
     return tree.postOrderTraversal();
 }
 

@@ -4,18 +4,18 @@
 #include <climits>
 #include <math.h>     
 
-Tree::Tree(vector<centroid_item> curves)
+Tree::Tree(vector<cluster_Frechet::centroid_item> OGcurves)
 {
-    Tree::n = curves.size();
+    Tree::n = OGcurves.size();
     Tree::height = floor(log2(n));
-    Tree::curveSize = curves[0].p.size();
+    Tree::curveSize = OGcurves[0].p.size();
     for(int i=0;i<n;i++)
-        Tree::curves.push_back(curves.p)
+        Tree::curves.push_back(OGcurves.p);
     cout << "Constructing new Tree" << endl;
     placeChildren();
 }
 
-Tree::vector<vector<float>> postOrderTraversal(Node* node)
+vector<vector<float>> Tree::postOrderTraversal(Node* node)
 {
     vector<vector<float>> leftCurve;
     vector<vector<float>> rightCurve;
@@ -32,22 +32,18 @@ Tree::vector<vector<float>> postOrderTraversal(Node* node)
             TWO_DIM::filter(meancurve,e);
             e*=2;
         }
-        return meanCurve;
+        return meancurve;
 }
 
-<<<<<<< HEAD
-bool isLeaf(Tree::Node* node) {
-=======
-Tree::bool isLeaf(Node* node)  
+bool Tree::isLeaf(Node* node)  
 {
->>>>>>> 04c083f2402fa0093648458f76888ccf8c489819
     if(node->leftChild == NULL && node->rightChild == NULL)
         return true; 
     else
         return false;
 }
 
-Tree::placeChildren()
+void Tree::placeChildren()
 {
     int nChildren = n;
     int nParents = ceil(nChildren/2.0);

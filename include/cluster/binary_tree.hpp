@@ -12,16 +12,17 @@ class Tree
 public:
     Node* root;
     Node** children;
-    vector<vector<float>> curves;
+    vector<vector<vector<float>>> curves;
     int height = 0;
     int n = 0;
     int curveSize;
+    Tree(vector<cluster_Frechet::centroid_item> curves);
+    ~Tree() {}
+    vector<vector<float>> postOrderTraversal(Node* node);
 
 protected:
-    Tree(vector<centroid_item> curves);
-    ~Tree() {}
-    placeChildren();
-    vector<vector<float>> postOrderTraversal(Node* node);
+
+    void placeChildren();
     bool isLeaf(Node* node);
 };
 
@@ -31,12 +32,13 @@ public:
     vector<vector<float>> curve;
     Node* leftChild;
     Node* rightChild;
-
-protected:
     Node(): leftChild(NULL), rightChild(NULL) {}
     Node(vector<vector<float>> curve): curve(curve), leftChild(NULL), rightChild(NULL) {}
     Node(vector<vector<float>> curve, Node* leftChild, Node* rightChild): curve(curve), leftChild(leftChild), rightChild(rightChild) {}
     ~Node() {}
+protected:
+
 };
+
 
 #endif
