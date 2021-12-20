@@ -17,31 +17,45 @@ Tree::Tree(vector<cluster_Frechet::centroid_item> OGcurves)
 
 vector<vector<float>> Tree::postOrderTraversal(Node* node)
 {
-    cout << "postOrderTraversal" << node->curve << endl;
+    cout << "postOrderTraversal" << endl;
     vector<vector<float>> leftCurve;
     vector<vector<float>> rightCurve;
-    if(isLeaf(node))
+    if(isLeaf(node)){
+        cout << "postOrderTraversal1" << endl;
         return node->curve;
+    }
     else
+    {
+        cout << "postOrderTraversal2" << endl;
         leftCurve = postOrderTraversal(node->leftChild);
+        cout << "postOrderTraversal3" << endl;
         if (node->rightChild != NULL)
             rightCurve = postOrderTraversal(node->rightChild);
+        cout << "postOrderTraversal4" << endl;
         vector<vector<float>> meancurve=meanCurve(leftCurve, rightCurve);
+        cout << "postOrderTraversal5" << endl;
         double e=0.1;
         while(meancurve.size()>curveSize)
         {
             TWO_DIM::filter(meancurve,e);
             e*=2;
         }
+        cout << "postOrderTraversal6" << endl;
         return meancurve;
+    }
 }
 
 bool Tree::isLeaf(Node* node)  
 {
-    if(node->leftChild == NULL && node->rightChild == NULL)
+    cout << "isLeaf" << endl;
+    if(node->leftChild == NULL && node->rightChild == NULL){
+        cout << "YES" << endl;
         return true; 
-    else
+    }
+    else{
+        cout << "NO" << endl;
         return false;
+    }
 }
 
 void Tree::placeChildren()
@@ -64,10 +78,14 @@ void Tree::placeChildren()
         if(i==0)
             for(int j=0;j<curves.size();j++)
                 structure[i][j] = new Node(curves[j]);
-        else
+        else if(i>0 && i<floors.size()-1)
             for(int j=0;j<floors[i]-1;j=j+2){
                 structure[i][j] = new Node(structure[i-1][j], structure[i-1][j+1]);
             }
+        else if(i==floors.size()-1){
+            structure[i][0] = new Node(structure[i-1][0], structure[i-1][1]);
+            root = structure[i][0];
+        }
         cout<<i<<" "<<floors[i]<<endl;
     }
 }

@@ -60,6 +60,9 @@ compile_debug_cluster:
 	 ./src/cluster/cluster_f.cpp ./src/cluster/cluster_ANN_f.cpp ./src/search/lsh_frechet.cpp ./src/cluster/binary_tree.cpp $(LIB_FILES) \
 	 -o ./bin/cluster -I./include/cluster -I./include/lsh -I./include/cube -I./include/search $(DEBUGFLAGS)
 
+gdb_cluster: clean_cluster compile_debug_cluster
+	gdb --args ./bin/cluster $(ARGS_CLUSTER)
+
 valgrind_cluster: mkdir
 	valgrind --leak-check=full \
 			--show-leak-kinds=all \
