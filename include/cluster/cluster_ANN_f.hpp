@@ -14,7 +14,6 @@ protected:
     bool terminationCriterion(float search_radius, int* updatedCentroid);
 
     vector<vector<vector<float>>> curves;
-    int curveSize;
 
     cluster_ANN_Frechet(int K,vector<vector<vector<float>>> curves);
 };

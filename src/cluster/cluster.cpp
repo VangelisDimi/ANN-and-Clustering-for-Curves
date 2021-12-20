@@ -95,6 +95,7 @@ void cluster::new_centroids()
     }
     for (int i=0;i<K;i++)
     {
+        if(centroids[i].vectors.size()==0) continue;
         centroids[i].coordinates=new_centroids[i];
         centroids[i].vectors.clear();
     }

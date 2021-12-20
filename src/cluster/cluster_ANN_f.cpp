@@ -8,7 +8,6 @@
 cluster_ANN_Frechet::cluster_ANN_Frechet(int K,vector<vector<vector<float>>> curves) : cluster_Frechet(K,curves)
 {
     cluster_ANN_Frechet::curves=curves;
-    cluster_ANN_Frechet::curveSize=(!curves.empty()) ? curves[0].size() : 0;
 }
 
 //cluster_ANN
@@ -84,7 +83,7 @@ cluster_lsh_Frechet::cluster_lsh_Frechet(vector<vector<vector<float>>> curves,in
         for(int i=0;i<cluster_Frechet::centroids.size();i++)
         {
             double e=0.1;
-            while(cluster_Frechet::centroids[i].coordinates.size()>cluster_ANN_Frechet::curveSize)
+            while(cluster_Frechet::centroids[i].coordinates.size()>cluster_Frechet::curveSize)
             {
                 TWO_DIM::filter(cluster_Frechet::centroids[i].coordinates,e);
                 e*=2;

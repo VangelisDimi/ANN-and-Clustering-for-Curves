@@ -104,5 +104,3 @@ void Tree::deleteNode(Node* node)
         deleteNode(node->rightChild);
     delete node;
 }
-
-

@@ -41,7 +41,7 @@ public:
 protected:
     vector<centroid> centroids;
     int K;
-    int vectorSize;
+    int curveSize;
     int n;
     int iterations = 0;
     cluster_Frechet(int K,vector<vector<vector<float>>> curves);

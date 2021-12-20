@@ -15,7 +15,7 @@
 cluster_Frechet::cluster_Frechet(int K,vector<vector<vector<float>>> curves)
 {
     cluster_Frechet::K=K;
-    cluster_Frechet::vectorSize=(!curves.empty()) ? curves[0].size() : 0;
+    cluster_Frechet::curveSize=(!curves.empty()) ? curves[0].size() : 0;
     cluster_Frechet::n=curves.size();
 
     //K-Means++ initialization
@@ -160,8 +160,6 @@ bool cluster_Frechet::convergence(vector<centroid> centroids_old)
     //Check if centroids converge by checking if they have the same
     //elements as previous assignment
     iterations++;
-    // if(iterations>=3)
-    //     return true;
     debug("iteration " <<iterations);
     for (int i = 0; i < K; i++)
     {
