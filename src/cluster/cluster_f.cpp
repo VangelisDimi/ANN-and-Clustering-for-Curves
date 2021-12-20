@@ -75,6 +75,47 @@ cluster_Frechet::cluster_Frechet(int K,vector<vector<vector<float>>> curves)
     }
 }
 
+void cluster_Frechet::new_centroids_array()
+{
+    //Create new centroids by calculating mean curve
+    for (int i=0;i<K;i++)
+    {
+        if(centroids[i].curves.size()==0) continue;
+        vector<vector<vector<float>>> curves;
+        for(int j=0;j<centroids[i].curves.size();j++)
+        {
+            curves.push_back(centroids[i].curves[j].p);
+        }
+
+        while (curves.size()>1)
+        {
+            vector<vector<vector<float>>> curves_new;
+            for(int j=0;j<curves.size();j+=2)
+            {
+                vector<vector<float>> leftCurve=curves[j];
+                vector<vector<float>> rightCurve;
+                if(j+1<curves.size())
+                {
+                    rightCurve=curves[j+1];
+                }
+
+                vector<vector<float>> meancurve=meanCurve(leftCurve, rightCurve);
+                double e=0.1;
+                while(meancurve.size()>curveSize)
+                {
+                    TWO_DIM::filter(meancurve,e);
+                    e*=2;
+                }
+                curves_new.push_back(meancurve);
+            }
+            curves=curves_new;
+            curves_new.clear();
+        }
+        centroids[i].coordinates = curves[0];
+        centroids[i].curves.clear();
+    }
+};
+
 vector<vector<float>> cluster_Frechet::calculateMeanCurve(int i)
 {
     vector<vector<float>> empty = centroids[i].coordinates;
@@ -198,6 +239,7 @@ cluster_lloyds_Frechet::cluster_lloyds_Frechet(int K,vector<vector<vector<float>
     {
         vector<centroid> centroids_old=centroids;
         new_centroids();
+        //new_centroids_array();
 
         for(int i=0;i<n;i++)
         {
