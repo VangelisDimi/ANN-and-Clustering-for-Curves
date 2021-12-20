@@ -16,7 +16,7 @@ namespace ONE_DIM{
     vector<float> prepareCurve(vector<vector<float>> p, double delta,unsigned int vector_size,float *t);
 }
 namespace TWO_DIM{
-    void filter(vector<vector<float>> curve,double e=1);
+    void filter(vector<vector<float>> &curve,double e=1);
     vector<vector<float>> snapCurve(vector<vector<float>> p, double delta,float *t);
     vector<float> concatCurve(vector<vector<float>> p,unsigned int vector_size);
     vector<float> prepareCurve(vector<vector<float>> p, double delta,unsigned int vector_size,float *t);

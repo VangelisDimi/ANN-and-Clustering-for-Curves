@@ -8,6 +8,7 @@
 #include "cluster_f.hpp"
 #include "binary_tree.hpp"
 #include "utils.hpp"
+#include "debug.hpp"
 #include<iostream>
 
 //Cluster parent class
@@ -158,8 +159,12 @@ bool cluster_Frechet::convergence(vector<centroid> centroids_old)
 {
     //Check if centroids converge by checking if they have the same
     //elements as previous assignment
+    iterations++;
+    // if(iterations>=3)
+    //     return true;
+    debug("iteration " <<iterations);
     for (int i = 0; i < K; i++)
-    {   
+    {
         if(centroids[i].curves.size() != centroids_old[i].curves.size())
                 return false;
         sort(centroids_old[i].curves.begin(),centroids_old[i].curves.end());

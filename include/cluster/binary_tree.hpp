@@ -33,11 +33,13 @@ public:
     vector<vector<vector<float>>> curves;
     int height = 0;
     int n = 0;
+    int mycounter=0;
     int curveSize;
     bool error = false;
     Tree(vector<cluster_Frechet::centroid_item> curves);
     ~Tree();
     vector<vector<float>> postOrderTraversal(Node* node);
+    Node* createNode(int level);
 
 protected:
 

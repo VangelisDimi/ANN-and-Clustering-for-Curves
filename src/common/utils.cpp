@@ -89,7 +89,7 @@ vector<float> prepareCurve(vector<vector<float>> p, double delta,unsigned int ve
 namespace TWO_DIM
 {
 
-void filter(vector<vector<float>> curve,double e)
+void filter(vector<vector<float>> &curve,double e)
 {
 	unsigned int y=1;
 	while(y<curve.size()-1)
@@ -224,7 +224,7 @@ vector<vector<float>> meanCurve(vector<vector<float>> p, vector<vector<float>> q
 	while (Pi!=0 && Qi!=0)
 	{
 		vector<float> idxvec={c[Pi-1][Qi],c[Pi][Qi-1],c[Pi-1][Qi-1]};
-		int minidx=1;
+		int minidx=0;
 		for(int i=1;i<3;i++)
 			if(idxvec[i]<idxvec[minidx]) minidx=i;
 		if(minidx==0)

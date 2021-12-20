@@ -8,7 +8,7 @@
 #include <getopt.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-
+#include "debug.hpp"
 #include "lsh.hpp"
 #include "cube.hpp"
 #include "lsh_frechet.hpp"
