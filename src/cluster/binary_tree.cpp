@@ -41,9 +41,25 @@ Tree::placeChildren()
     int nParents = ceil(nChildren/2.0);
     for(int i=0;i<n;i++)
         children[i] = new Node(curves[i]);
-    Node** parents;
-    for(int i=0;i<nParents;i++)
-        parents[i] = new Node
-
+    while(1){
+        int counter = 0;
+        Node** parents;
+        Node** children = Tree::children;
+        Node* childx = NULL;
+        Node* childy = NULL;
+        for(int i=0;i<nParents;i++)
+        {
+            if (counter<nChildren)
+                childx = children[counter++];
+            else
+                childx = NULL;
+            if (counter<nChildren)
+                childy = children[counter++];
+            else
+                childy = NULL;
+            parents[i] = new Node(childx, childy);
+        }
+        nChildren = nParents;
+    }
 }
 

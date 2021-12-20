@@ -34,6 +34,7 @@ public:
 protected:
     Node(): leftChild(NULL), rightChild(NULL) {}
     Node(vector<vector<float>> curve): curve(curve), leftChild(NULL), rightChild(NULL) {}
+    Node(Node* leftChild, Node* rightChild): leftChild(leftChild), rightChild(rightChild) {}
     Node(vector<vector<float>> curve, Node* leftChild, Node* rightChild): curve(curve), leftChild(leftChild), rightChild(rightChild) {}
     ~Node() {}
 };
