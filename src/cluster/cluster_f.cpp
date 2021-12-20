@@ -73,30 +73,19 @@ cluster_Frechet::cluster_Frechet(int K,vector<vector<vector<float>>> curves)
     }
 }
 
+vector<vector<float>> cluster_Frechet::calculateMeanCurve(int i)
+{
+    tree = Tree(centroids[i].curves);
+    return tree.postOrderTraversal();
+}
+
 void cluster_Frechet::new_centroids()
 {
     //Create new centroids by calculating mean curve
     vector<vector<float>> new_centroids;
-    for (auto it = centroids.begin(); it != centroids.end(); ++it)
-    {
-        vector<float> new_centroid(vectorSize);
-        iota(new_centroid.begin(), new_centroid.end(), 0);
-        for(auto it2 = it->curves.begin() ; it2 != it->curves.end(); ++it2)
-        {
-            for (int i = 0; i < vectorSize; i++)
-            {
-                new_centroid[i] += it2->p[i];
-            }
-        }
-        for (int y = 0; y < vectorSize; y++)
-        {
-            new_centroid[y] /= it->curves.size();
-        }
-        new_centroids.push_back(new_centroid);
-    }
     for (int i=0;i<K;i++)
     {
-        centroids[i].coordinates=new_centroids[i];
+        centroids[i].coordinates = calculateMeanCurve(i);
         centroids[i].curves.clear();
     }
 };

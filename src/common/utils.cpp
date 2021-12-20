@@ -235,14 +235,14 @@ vector<vector<float>> meanCurve(vector<vector<float>> p, vector<vector<float>> q
 			traversal.push_front({--Pi,--Qi});
 	}
 
-	vector<vector<float>> meanvec;
+	vector<vector<float>> meancurve;
 	for (auto it = traversal.begin(); it != traversal.end(); ++it)
 	{
 		int i=it->first;
 		int j=it->second;
-		meanvec.push_back({(p[i][0]+q[j][0])/2,(p[i][1]+q[j][1])/2});
+		meancurve.push_back({(p[i][0]+q[j][0])/2,(p[i][1]+q[j][1])/2});
 	}
-	return meanvec;
+	return meancurve;
 }
 
 

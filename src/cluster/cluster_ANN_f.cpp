@@ -83,7 +83,7 @@ cluster_lsh_Frechet::cluster_lsh_Frechet(vector<vector<vector<float>>> curves,in
         new_centroids();
         for(int i=0;i<cluster_Frechet::centroids.size();i++)
         {
-            double e=1;
+            double e=0.1;
             while(cluster_Frechet::centroids[i].coordinates.size()>cluster_ANN_Frechet::curveSize)
             {
                 TWO_DIM::filter(cluster_Frechet::centroids[i].coordinates,e);

@@ -16,6 +16,7 @@ class FrechetTestCase : public CppUnit::TestFixture
 {
 CPPUNIT_TEST_SUITE(FrechetTestCase);
 CPPUNIT_TEST(testDiscreteDist);
+CPPUNIT_TEST(testContinuousDist);
 CPPUNIT_TEST(testMeanCurve);
 CPPUNIT_TEST_SUITE_END();
 
@@ -25,6 +26,7 @@ public:
 
 protected:
     void testDiscreteDist();
+    void testContinuousDist();
     void testMeanCurve();
 };
 
