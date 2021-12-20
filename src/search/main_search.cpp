@@ -189,9 +189,9 @@ int main(int argc, char *argv[]){
 			}
 			else if(metric=="continuous")
 			{
+				LSH_Frechet lsh_fc(curves,k_lsh,L_lsh,CFD,delta);
 				ONE_DIM::filter(curves);
 				ONE_DIM::filter(curves_query);
-				LSH_Frechet lsh_fc(curves,k_lsh,L_lsh,CFD,delta);
 				for (unsigned int i=0 ; i<n_query ; i++)
 				{
 					auto start_lsh = chrono::high_resolution_clock::now();

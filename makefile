@@ -21,7 +21,7 @@ UPDATE			?= "Mean Frechet"
 ASSIGNMENT      ?= Classic
 
 ARGS_SEARCH 	?= -algorithm $(ALGORITHM) -metric $(METRIC) -i $(INPUT_FILE) -q $(QUERY_FILE) -o $(OUTPUT_FILE)_search
-ARGS_CLUSTER 	?= -i $(INPUT_FILE) -o $(OUTPUT_FILE)_cluster -c $(CONFIG_FILE) -update $(UPDATE) -assignment $(ASSIGNMENT) -silhouette -complete
+ARGS_CLUSTER 	?= -i $(INPUT_FILE) -o $(OUTPUT_FILE)_cluster -c $(CONFIG_FILE) -update $(UPDATE) -assignment $(ASSIGNMENT) -complete
 
 #search
 clean_search:
@@ -38,8 +38,8 @@ valgrind_search: mkdir
 			--show-leak-kinds=all \
 			--track-origins=yes \
 			--verbose \
-			--log-file=./output/valgrind-out-lsh.txt \
-			./bin/search $(ARGS)
+			--log-file=./output/valgrind-out-search.txt \
+			./bin/search $(ARGS_SEARCH)
 			
 run_search:
 	./bin/search $(ARGS_SEARCH) 
@@ -50,12 +50,12 @@ clean_cluster:
 
 compile_cluster: mkdir
 	$(CC) ./src/cluster/main_cluster.cpp ./src/cluster/cluster.cpp ./src/cluster/cluster_ANN.cpp ./src/cube/cube.cpp ./src/lsh/lsh.cpp $(COMMON)/utils.cpp $(COMMON)/hash_functions.cpp \
-	 ./src/cluster/cluster_f.cpp ./src/cluster/cluster_ANN_f.cpp ./src/search/lsh_frechet.cpp $(LIB_FILES) \
+	 ./src/cluster/cluster_f.cpp ./src/cluster/cluster_ANN_f.cpp ./src/search/lsh_frechet.cpp ./src/cluster/binary_tree.cpp $(LIB_FILES) \
 	 -o ./bin/cluster -I./include/cluster -I./include/lsh -I./include/cube -I./include/search $(CFLAGS)
 
 compile_debug_cluster:
 	$(CC) ./src/cluster/main_cluster.cpp ./src/cluster/cluster.cpp ./src/cluster/cluster_ANN.cpp ./src/cube/cube.cpp ./src/lsh/lsh.cpp $(COMMON)/utils.cpp $(COMMON)/hash_functions.cpp \
-	 ./src/cluster/cluster_f.cpp ./src/cluster/cluster_ANN_f.cpp ./src/search/lsh_frechet.cpp $(LIB_FILES) \
+	 ./src/cluster/cluster_f.cpp ./src/cluster/cluster_ANN_f.cpp ./src/search/lsh_frechet.cpp ./src/cluster/binary_tree.cpp $(LIB_FILES) \
 	 -o ./bin/cluster -I./include/cluster -I./include/lsh -I./include/cube -I./include/search $(DEBUGFLAGS)
 
 valgrind_cluster: mkdir
@@ -64,7 +64,7 @@ valgrind_cluster: mkdir
 			--track-origins=yes \
 			--verbose \
 			--log-file=./output/valgrind-out-cluster.txt \
-			./bin/cluster $(ARGS)
+			./bin/cluster $(ARGS_CLUSTER)
 			
 run_cluster:
 	./bin/cluster $(ARGS_CLUSTER)
@@ -77,7 +77,7 @@ remove_test_lib:
 
 compile_test:
 	mkdir -p ./bin/test
-	$(CC) ./test/test.cpp ./src/common/utils.cpp \
+	$(CC) ./test/test.cpp ./src/common/utils.cpp $(LIB_FILES) \
 	-o ./bin/test/test $(CFLAGS) -lcppunit
 run_test:
 	./bin/test/test

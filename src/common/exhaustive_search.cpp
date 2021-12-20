@@ -25,7 +25,7 @@ vector<pair<float,unsigned int>> exhaustive_search(vector<float> p,vector<vector
 
 vector<pair<float,unsigned int>> exhaustive_search(vector<vector<float>> p,vector<vector<vector<float>>> curves,unsigned int N,float (* distance)(vector<vector<float>>,vector<vector<float>>))
 {    
-    //Find N nearest neighbors of vector p size n from vector of vectors
+    //Find N nearest neighbors of curve p size n from vector of curves
     //Return indices
     multimap<float,int> distances;
     for(unsigned int i=0;i<curves.size();i++)
