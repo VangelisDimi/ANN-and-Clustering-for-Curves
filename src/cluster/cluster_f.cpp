@@ -76,8 +76,11 @@ cluster_Frechet::cluster_Frechet(int K,vector<vector<vector<float>>> curves)
 
 vector<vector<float>> cluster_Frechet::calculateMeanCurve(int i)
 {
+    vector<vector<float>> empty = centroids[i].coordinates;
     Tree tree = Tree(centroids[i].curves);
-    return tree.postOrderTraversal(tree.root);
+    if(tree.error==false)
+        return tree.postOrderTraversal(tree.root);
+    else return empty;
 }
 
 void cluster_Frechet::new_centroids()

@@ -22,21 +22,21 @@ protected:
 
 };
 
-typedef Node* NodePtr;
-typedef NodePtr* NodePtrArr;
-
 
 class Tree
 {
 public:
+    Node*** structure;
     Node* root;
     Node** children;
+    vector<int> floors;
     vector<vector<vector<float>>> curves;
     int height = 0;
     int n = 0;
     int curveSize;
+    bool error = false;
     Tree(vector<cluster_Frechet::centroid_item> curves);
-    ~Tree() {}
+    ~Tree();
     vector<vector<float>> postOrderTraversal(Node* node);
 
 protected:
