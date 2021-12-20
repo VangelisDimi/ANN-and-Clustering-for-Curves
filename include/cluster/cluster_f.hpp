@@ -41,7 +41,6 @@ public:
 protected:
     vector<centroid> centroids;
     int K;
-
     int vectorSize;
     int n;
     int iterations = 0;
