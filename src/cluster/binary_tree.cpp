@@ -10,13 +10,14 @@ Tree::Tree(vector<cluster_Frechet::centroid_item> OGcurves)
     Tree::height = floor(log2(n));
     Tree::curveSize = OGcurves[0].p.size();
     for(int i=0;i<n;i++)
-        Tree::curves.push_back(OGcurves.p);
+        Tree::curves.push_back(OGcurves[i].p);
     cout << "Constructing new Tree" << endl;
     placeChildren();
 }
 
 vector<vector<float>> Tree::postOrderTraversal(Node* node)
 {
+    cout << "postOrderTraversal" << node->curve << endl;
     vector<vector<float>> leftCurve;
     vector<vector<float>> rightCurve;
     if(isLeaf(node))
@@ -45,44 +46,29 @@ bool Tree::isLeaf(Node* node)
 
 void Tree::placeChildren()
 {
-    int nChildren = n;
-    int nParents = ceil(nChildren/2.0);
-    for(int i=0;i<n;i++)
-        children[i] = new Node(curves[i]);
-    Node** parents;
-    Node** children = Tree::children;
+    vector<int> floors;
+    while(1){
+        cout << n << endl;
+        floors.push_back(n);
+        n = ceil(n/2.0);
+        if(n==1){
+            floors.push_back(1);
+            break;
+        }
+    }
+    Node*** structure = new Node**[floors.size()];
     Node* childx = NULL;
     Node* childy = NULL;
-    int counter = 0;
-    while(1){
-        counter = 0;
-        for(int i=0;i<nParents;i++)
-        {
-            if (counter<nChildren)
-                childx = children[counter++];
-            else
-                childx = NULL;
-            if (counter<nChildren)
-                childy = children[counter++];
-            else
-                childy = NULL;
-            parents[i] = new Node(childx, childy);
-        }
-        nChildren = nParents;
-        children = parents;
-        counter=0;
-        if(nChildren<=2){
-            if (counter<nChildren)
-                childx = children[counter++];
-            else
-                childx = NULL;
-            if (counter<nChildren)
-                childy = children[counter++];
-            else
-                childy = NULL;
-            Tree::root = new Node(childx, childy);
-        }
-        parents = NULL;
+    for(int i=0;i<floors.size();i++){
+        structure[i] = new Node*[floors[i]];
+        if(i==0)
+            for(int j=0;j<curves.size();j++)
+                structure[i][j] = new Node(curves[j]);
+        else
+            for(int j=0;j<floors[i]-1;j=j+2){
+                structure[i][j] = new Node(structure[i-1][j], structure[i-1][j+1]);
+            }
+        cout<<i<<" "<<floors[i]<<endl;
     }
 }
 

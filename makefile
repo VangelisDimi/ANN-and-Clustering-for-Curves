@@ -44,6 +44,8 @@ valgrind_search: mkdir
 run_search:
 	./bin/search $(ARGS_SEARCH) 
 
+search: clean_search compile_search run_search
+
 #cluster
 clean_cluster:
 	rm -f ./bin/cluster
@@ -68,6 +70,8 @@ valgrind_cluster: mkdir
 			
 run_cluster:
 	./bin/cluster $(ARGS_CLUSTER)
+
+cluster: clean_cluster compile_cluster run_cluster
 
 #test
 install_test_lib:
