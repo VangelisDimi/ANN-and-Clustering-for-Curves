@@ -11,8 +11,8 @@ CC				= g++ -std=c++14
 CFLAGS 			?= -I$(INCLUDE_COMMON) $(INCLUDE_LIB) -O2
 DEBUGFLAGS 		?= -g -Wextra -Wall -I$(INCLUDE_COMMON) $(INCLUDE_LIB)  -O2
 
-INPUT_FILE 		?= ./examples/Datasets/nasdaq2007_17_input.csv
-QUERY_FILE 		?= ./examples/Datasets/nasdaq2007_17_query.csv
+INPUT_FILE 		?= ./examples/Datasets/nasd_input.csv
+QUERY_FILE 		?= ./examples/Datasets/nasd_query.csv
 CONFIG_FILE     ?= ./examples/cluster_example.conf
 OUTPUT_FILE 	?= results
 METRIC			?= discrete
@@ -20,8 +20,8 @@ ALGORITHM		?= Frechet
 UPDATE			?= "Mean Frechet"
 ASSIGNMENT      ?= Classic
 
-ARGS_SEARCH 	?= -algorithm $(ALGORITHM) -metric $(METRIC) -i $(INPUT_FILE) -q $(QUERY_FILE) -o $(OUTPUT_FILE)
-ARGS_CLUSTER 	?= -i $(INPUT_FILE) -o $(OUTPUT_FILE) -c $(CONFIG_FILE) -update $(UPDATE) -assignment $(ASSIGNMENT) -complete -silhouette
+ARGS_SEARCH 	?= -algorithm $(ALGORITHM) -metric $(METRIC) -i $(INPUT_FILE) -q $(QUERY_FILE) -o $(OUTPUT_FILE)_search
+ARGS_CLUSTER 	?= -i $(INPUT_FILE) -o $(OUTPUT_FILE)_cluster -c $(CONFIG_FILE) -update $(UPDATE) -assignment $(ASSIGNMENT) -complete
 
 #search
 clean_search:
