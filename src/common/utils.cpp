@@ -178,10 +178,17 @@ float continuousFrechetDistance(vector<vector<float>> p, vector<vector<float>> q
 
 float getDiscreteFrechetDistance(vector<vector<float>> p, vector<vector<float>> q)
 {
-	float c[p.size()][q.size()];
-	for(int i=0;i<p.size();i++)
+	unsigned int size_p=p.size();
+	unsigned int size_q=q.size();
+	float **c = new float*[size_p];
+	for (unsigned int i=0;i<size_p;i++)
 	{
-		for(int j=0;j<q.size();j++)
+		c[i]=new float[size_q];
+	}
+	
+	for(unsigned int i=0;i<size_p;i++)
+	{
+		for(unsigned int j=0;j<size_q;j++)
 		{
 			if(i==0 && j == 0)
 				c[0][0] = eucledian_distance(p[0],q[0]);
@@ -193,7 +200,14 @@ float getDiscreteFrechetDistance(vector<vector<float>> p, vector<vector<float>> 
 				c[i][j] = max(min({c[i-1][j],c[i-1][j-1],c[i][j-1]}),eucledian_distance(p[i],q[j]));
 		}
 	}
-	return c[p.size()-1][q.size()-1];
+
+	float result=c[size_p-1][size_q-1];
+	for (unsigned int i=0;i<size_p;i++)
+	{
+		delete[] c[i];
+	}
+	delete[] c;
+	return result;
 }
 
 vector<vector<float>> meanCurve(vector<vector<float>> p, vector<vector<float>> q)
@@ -202,10 +216,17 @@ vector<vector<float>> meanCurve(vector<vector<float>> p, vector<vector<float>> q
 		return q;
 	if(q.empty())
 		return p;
-	float c[p.size()][q.size()];
-	for(int i=0;i<p.size();i++)
+	unsigned int size_p=p.size();
+	unsigned int size_q=q.size();
+	float **c = new float*[size_p];
+	for (unsigned int i=0;i<size_p;i++)
 	{
-		for(int j=0;j<q.size();j++)
+		c[i]=new float[size_q];
+	}
+
+	for(unsigned int i=0;i<size_p;i++)
+	{
+		for(unsigned int j=0;j<size_q;j++)
 		{
 			if(i==0 && j == 0)
 				c[0][0] = eucledian_distance(p[0],q[0]);
@@ -219,7 +240,7 @@ vector<vector<float>> meanCurve(vector<vector<float>> p, vector<vector<float>> q
 	}
 
 	list<pair<int,int>> traversal;
-	int Pi=p.size()-1,Qi=q.size()-1;
+	int Pi=size_p-1,Qi=size_q-1;
 	traversal.push_front({Pi,Qi});
 	while (Pi!=0 && Qi!=0)
 	{
@@ -242,6 +263,13 @@ vector<vector<float>> meanCurve(vector<vector<float>> p, vector<vector<float>> q
 		int j=it->second;
 		meancurve.push_back({(p[i][0]+q[j][0])/2,(p[i][1]+q[j][1])/2});
 	}
+
+	for (unsigned int i=0;i<size_p;i++)
+	{
+		delete[] c[i];
+	}
+	delete[] c;
+
 	return meancurve;
 }
 
