@@ -238,8 +238,8 @@ cluster_lloyds_Frechet::cluster_lloyds_Frechet(int K,vector<vector<vector<float>
     while(true)
     {
         vector<centroid> centroids_old=centroids;
-        new_centroids();
-        //new_centroids_array();
+        //new_centroids();
+        new_centroids_array();
 
         for(int i=0;i<n;i++)
         {
