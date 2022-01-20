@@ -286,24 +286,25 @@ int main(int argc, char *argv[]){
 		outfile << "MAF: " << maf << endl;
 		outfile.close();
 
-        string option;
-		cout << "Enter /exit to exit program.\n";
-		cout << "Enter /rerun to rerun program with new dataset.\n";
-		while (true)
-		{   
-			cin >> option;
-			if (option.compare("/rerun")==0)
-			{
-				input_file.clear();
-				query_file.clear();
-				output_file.clear();
-				break;
-			}
-			if(option.compare("/exit")==0)
-			{
-				return 0;
-			}
-		}
+		return 0;
+        // string option;
+		// cout << "Enter /exit to exit program.\n";
+		// cout << "Enter /rerun to rerun program with new dataset.\n";
+		// while (true)
+		// {   
+		// 	cin >> option;
+		// 	if (option.compare("/rerun")==0)
+		// 	{
+		// 		input_file.clear();
+		// 		query_file.clear();
+		// 		output_file.clear();
+		// 		break;
+		// 	}
+		// 	if(option.compare("/exit")==0)
+		// 	{
+		// 		return 0;
+		// 	}
+		// }
     }
 	return 0;
 }
