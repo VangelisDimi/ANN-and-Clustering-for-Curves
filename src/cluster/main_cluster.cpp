@@ -145,7 +145,7 @@ int main(int argc, char *argv[]){
 		cin>>K_cluster;
 	}
 
-	if(update==MEAN_V)
+	if(update==MEAN_V || update=="Mean_Vector")
 	{
 		vector<vector<float>> vectors;
 		vector<string> ids;
@@ -184,10 +184,10 @@ int main(int argc, char *argv[]){
 			double time_cluster = chrono::duration<double>(elapsed_cluster).count();
 
 			if(silhouette) silhouettes=cluster.get_silhouettes_average();
-			write_file(output_file,cluster.get_clusters(),silhouettes,ids,time_cluster," Range Search LSH with "+update,complete,silhouette);
+			write_file(output_file,cluster.get_clusters(),silhouettes,ids,time_cluster," Range Search Hypercube with "+update,complete,silhouette);
 		}
 	}
-	else if(update==MEAN_F)
+	else if(update==MEAN_F || update=="Mean_Frechet")
 	{
 		vector<vector<vector<float>>> curves;
 		vector<string> ids;
